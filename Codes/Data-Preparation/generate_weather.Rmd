@@ -1,0 +1,228 @@
+---
+title: "weather_generation"
+author: "Qianqian Du"
+date: "2024-03-22"
+output: html_document
+---
+
+```{r}
+
+write_dir = "/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/consistent_rate_trials/"
+
+true_weather <- read_apsim_met("Iowa_CC.met", src.dir = write_dir)
+
+# take a look at the weather #
+
+weather_overlook <- true_weather %>% 
+  data.table() %>% 
+  .[, .(year_precip = sum(rain)), by = "year"]
+
+ggplot(data = weather_overlook)+
+  geom_point(aes(x = year, y = year_precip))
+
+# 2012 is a very dry year and 2010 is a very wet year. 
+
+```
+
+
+
+```{r}
+###---- choose the year of 2019's weather and replicate it for other years ----###
+weather_2019 <- true_weather[year == 2019, ]
+
+weather_2019 <- true_weather %>% 
+  filter(year == 2019) %>% 
+  dplyr::select(year, day, radn, maxt, mint, rain)
+
+
+class(weather_2019)
+
+
+str(weather_2019)
+
+write_apsim_met(weather_2019, write_dir, filename = "weather_2019.met")
+
+read_apsim_met("weather_2019.met", write_dir)
+
+
+###---- generate the fake data for 2015-2020 ----###
+weather_2015 <- weather_2019
+weather_2015$year <- as.integer(2015)
+
+weather_2016 <- weather_2019 %>% 
+  rbind(weather_2019[365,])
+
+weather_2016[366, 2] <- 366
+weather_2016$year <- as.integer(2016)
+
+tail(weather_2020)
+
+weather_2017 <- weather_2019
+weather_2017$year <- as.integer(2017)
+
+weather_2018 <- weather_2019
+weather_2018$year <- as.integer(2018)
+
+weather_2020 <- weather_2019 %>% 
+  rbind(weather_2019[365,])
+
+weather_2020[366, 2] <- 366
+weather_2020$year <- as.integer(2020)
+
+weather_2021 <- weather_2019
+weather_2021$year <- as.integer(2021)
+
+weather_2022 <- weather_2019
+weather_2022$year <- as.integer(2022)
+
+weather_2023 <- weather_2019
+weather_2023$year <- as.integer(2023)
+
+
+
+###====== data.table will change the format of .met dataset!!! =======###
+
+# weather_2015 <- weather_2019 %>% 
+#   .[, -"year"] %>% 
+#   .[, year := as.integer("2015")] %>% 
+#   .[, .(year, day, radn, maxt, mint, rain)]
+
+# weather_2016 <- weather_2019 %>% 
+#   .[, -"year"] %>% 
+#   .[, year := as.integer("2016")] %>% 
+#   .[, .(year, day, radn, maxt, mint, rain)] %>% 
+#   rbind(weather_2019[365,])
+# 
+# tail(weather_2016)
+# 
+# weather_2016[366, 2] <- 366
+# weather_2016[366, 1] <- as.integer("2016")
+# 
+# 
+# weather_2017 <- weather_2019 %>% 
+#   .[, -"year"] %>% 
+#   .[, year := as.integer("2017")] %>% 
+#   .[, .(year, day, radn, maxt, mint, rain)]
+# 
+# weather_2018 <- weather_2019 %>% 
+#   .[, -"year"] %>% 
+#   .[, year := as.integer("2018")] %>% 
+#   .[, .(year, day, radn, maxt, mint, rain)]
+# 
+# weather_2020 <- weather_2019 %>% 
+#   .[, -"year"] %>% 
+#   .[, year := as.integer("2020")] %>% 
+#   .[, .(year, day, radn, maxt, mint, rain)] %>% 
+#   rbind(weather_2019[365,])
+# 
+# weather_2020[366, 2] <- 366
+# weather_2020[366, 1] <- as.integer("2020")
+# 
+# tail(weather_2020)
+
+```
+
+
+```{r}
+
+## === bind all years' data together ==##
+fake_weather <- weather_2015 %>% 
+  rbind(weather_2016) %>% 
+  rbind(weather_2017) %>% 
+  rbind(weather_2018) %>% 
+  rbind(weather_2019) %>% 
+  rbind(weather_2020) %>% 
+  rbind(weather_2021) %>% 
+  rbind(weather_2022) %>% 
+  rbind(weather_2023)
+
+nrow(fake_weather)
+
+tail(weather_2020)
+
+
+##====== write the weather into a met data file =====##
+write_apsim_met(fake_weather, wrt.dir = write_dir, filename = "fake_weather.met")
+
+```
+
+
+# Creating the dry year as fake weather; Use 2010 as the wet year and create fake weather 
+
+
+```{r}
+
+###---- choose the year of 2019's weather and replicate it for other years ----###
+weather_2017 <- true_weather %>% 
+  filter(year == 2017)
+
+nrow(weather_2017) # 2012 is a leep year, has 366 days
+
+class(weather_2017)
+
+###---- generate the fake data for 2015-2020 ----###
+weather_2015 <- weather_2017
+weather_2015$year <- as.integer(2015)
+
+weather_2016 <- weather_2017 %>% 
+  rbind(weather_2019[365,])
+
+weather_2016[366, 2] <- 366
+weather_2016$year <- as.integer(2016)
+
+tail(weather_2016)
+
+weather_2017 <- weather_2017
+weather_2017$year <- as.integer(2017)
+
+weather_2018 <- weather_2017
+weather_2018$year <- as.integer(2018)
+
+weather_2020 <- weather_2017 %>% 
+  rbind(weather_2019[365,])
+
+weather_2020[366, 2] <- 366
+weather_2020$year <- as.integer(2020)
+
+weather_2021 <- weather_2017
+weather_2021$year <- as.integer(2021)
+
+weather_2022 <- weather_2017
+weather_2022$year <- as.integer(2022)
+
+weather_2023 <- weather_2017
+weather_2023$year <- as.integer(2023)
+
+
+
+```
+
+```{r}
+
+## === bind all years' data together ==##
+fake_weather_dry <- weather_2015 %>% 
+  rbind(weather_2016) %>% 
+  rbind(weather_2017) %>% 
+  rbind(weather_2018) %>% 
+  rbind(weather_2019) %>% 
+  rbind(weather_2020) %>% 
+  rbind(weather_2021) %>% 
+  rbind(weather_2022) %>% 
+  rbind(weather_2023)
+
+nrow(fake_weather_dry) # 365*9+2 = 3287
+
+
+##====== write the weather into a met data file =====##
+write_apsim_met(fake_weather_dry, wrt.dir = write_dir, filename = "fake_weather_dry.met")
+
+read_apsim_met("fake_weather_dry.met", write_dir)
+
+
+
+```
+
+
+
+
+
