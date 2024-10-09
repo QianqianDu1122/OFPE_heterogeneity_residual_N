@@ -1,0 +1,15 @@
+Shared/*
+shared_by_Miguez/
+*.db
+*.db*
+*.met
+*html
+*html*
+*.rds
+*.png
+*.pdf
+*.bak
+*.docx
+*.DS_Store
+.Rproj.user
+*.RData
