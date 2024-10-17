@@ -5,12 +5,49 @@ date: "2024-10-17"
 output: html_document
 ---
 
-# Eonomic analysis for corn-corn ofpe
+# Eonomic analysis for corn-corn ofpe setting
 ```{r}
-cc_ofpe <- 
+###---- upload the simulation result ----###
+cc_ofpe <- readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/ofpe_true_yrp/first_40.rds")
+
+###---- find the simulated true yield response curves ----###
+
+cc_ofpe_yield <- cc_ofpe %>% 
+  data.table() %>% 
+  .[year == 2018, .(yield_max = max(CropYield)), by = .(applied_N, plot_id)]
 
 
+###---- create N seq for trial designs ----###
+N_rates <- data.frame(
+    var_N = as.character(seq(0, 240, by = 5))
+  )
 
+number_plot <- 100
+
+set.seed(230829)
+###--- trial design ---###
+applied_N <- data.frame(
+  year_1 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_2 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_3 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_4 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  plot_id = seq(1, 100, by = 1)) %>% 
+  as.list()
+
+cc_ofpe_td <- data.frame(
+  applied_N = as.numeric(applied_N$year_4[1:40]),
+  plot_id = as.character(seq(1,40, by = 1))
+) %>% 
+  left_join(., cc_ofpe_yield, by = c("applied_N", "plot_id"))
+
+
+###---- Visualize the true yield responses and the estimated yield response from ofpe  ----###
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_td, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cc_ofpe_td, color = "blue")+
+  theme_bw()
 
 ```
 
