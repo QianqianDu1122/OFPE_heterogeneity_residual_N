@@ -9,6 +9,8 @@ output: html_document
 library(tidyverse)
 library(ggplot2)
 library(data.table)
+library(gam)
+library(gratia)
 
 ```
 
@@ -96,6 +98,44 @@ cc_ofpe_uni <- cc_ofpe_yield %>%
   .[, type := "uniform N rate"]
 
 cc_ofpe_uni
+
+
+## Estimate the EONR from OFPE ##
+
+gam_re <- gam(
+  yield_max
+  ~ s(applied_N),
+  data = cc_ofpe_td
+)
+
+
+eval_data <- data.frame(
+  applied_N = seq(
+    0, 240, by = 5
+  )
+) %>% 
+  data.table() %>% 
+  .[, y_hat := predict(gam_re, newdata = ., se = TRUE)]
+
+cc_ofpe_estimate <- eval_data %>% 
+  .[, profit := y_hat*corn_price - applied_N*N_price] %>% 
+  filter(profit == max(profit)) %>% 
+  .[, type := "ofpe estimated N rate"]
+  
+```
+
+```{r}
+# Compare the 3 types of EONRs together for cc ofpe in previous years
+
+# site-specific EONRs statistic #
+summary(cc_ofpe_yield_analysis$applied_N)
+summary(cc_ofpe_yield_analysis$profit)
+
+# Uniform EONR #
+cc_ofpe_uni
+
+# Estimated EONR #
+cc_ofpe_estimate
 
 ```
 
