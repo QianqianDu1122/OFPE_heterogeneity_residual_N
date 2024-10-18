@@ -5,6 +5,13 @@ date: "2024-10-17"
 output: html_document
 ---
 
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+
+```
+
 # Eonomic analysis for corn-corn ofpe setting
 ```{r}
 ###---- upload the simulation result ----###
@@ -50,6 +57,51 @@ ggplot()+
   theme_bw()
 
 ```
+
+
+```{r}
+###---- Find the uniform EONR  ----###
+
+#--- set prices ---#
+corn_price <- 5
+N_price <- 6
+
+
+cc_ofpe_yield_analysis <- cc_ofpe_yield %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  group_by(plot_id) %>% 
+  filter(profit == max(profit))
+
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_td, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cc_ofpe_td, color = "blue")+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_yield_analysis, color = "red")+
+  theme_bw()
+
+# site-specific EONRs statistic #
+summary(cc_ofpe_yield_analysis$applied_N)
+
+# Uniform EONR #
+
+cc_ofpe_uni <- cc_ofpe_yield %>% 
+  data.table() %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  #---- find each level of N can bring how much profit for the whole field ----#
+  .[, .(yield = mean(yield_max), profit = mean(profit)), by = applied_N] %>% 
+  #---- filter out the uniform N that brings the highest profit ----#
+  .[profit == max(profit), ] %>% 
+  .[, type := "uniform N rate"]
+
+cc_ofpe_uni
+
+```
+
+
+
+
 
 
 
