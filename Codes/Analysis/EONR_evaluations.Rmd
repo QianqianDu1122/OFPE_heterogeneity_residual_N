@@ -10,12 +10,10 @@ library(tidyverse)
 library(ggplot2)
 library(data.table)
 library(gam)
-library(gratia)
-
 ```
 
 # Eonomic analysis for corn-corn ofpe setting
-```{r}
+```{r cache=TRUE}
 ###---- upload the simulation result ----###
 cc_ofpe <- readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/ofpe_true_yrp/first_40.rds")
 
@@ -61,7 +59,7 @@ ggplot()+
 ```
 
 
-```{r}
+```{r cache=TRUE}
 ###---- Find the uniform EONR  ----###
 
 #--- set prices ---#
@@ -124,7 +122,7 @@ cc_ofpe_estimate <- eval_data %>%
   
 ```
 
-```{r}
+```{r cache=TRUE}
 # Compare the 3 types of EONRs together for cc ofpe in previous years
 
 # site-specific EONRs statistic #
@@ -140,8 +138,390 @@ cc_ofpe_estimate
 ```
 
 
+# Eonomic analysis for corn-corn consistent setting
+
+```{r cache=TRUE}
+###---- upload the simulation result ----###
+cc_consistant <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/N_Residual_APSIM/Codes/ofpe_true_yrp/cc_consistant.rds")
+
+cc_consistant$applied_N %>% unique()
+
+###---- find the simulated true yield response curves ----###
+
+cc_consist_yield <- cc_consistant %>% 
+  data.table() %>% 
+  .[year == 2018, .(yield_max = max(CropYield)), by = .(applied_N, plot_id)]
 
 
+###---- create N seq for trial designs ----###
+N_rates <- data.frame(
+    var_N = as.character(seq(0, 240, by = 5))
+  )
+
+number_plot <- 100
+
+set.seed(230829)
+###--- trial design ---###
+applied_N <- data.frame(
+  year_1 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_2 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_3 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_4 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  plot_id = seq(1, 100, by = 1)) %>% 
+  as.list()
+
+cc_consistant_td <- data.frame(
+  applied_N = as.numeric(applied_N$year_4[1:40]),
+  plot_id = as.character(seq(1,40, by = 1))
+) %>% 
+  left_join(., cc_consist_yield, by = c("applied_N", "plot_id"))
+
+
+###---- Visualize the true yield responses and the estimated yield response from ofpe  ----###
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consist_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consist_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consistant_td, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cc_consistant_td, color = "blue")+
+  theme_bw()
+
+```
+
+
+```{r cache=TRUE}
+###---- Find the uniform EONR  ----###
+
+#--- set prices ---#
+corn_price <- 5
+N_price <- 6
+
+
+cc_consist_yield_analysis <- cc_consist_yield %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  group_by(plot_id) %>% 
+  filter(profit == max(profit))
+
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consist_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consist_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consistant_td, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cc_consistant_td, color = "blue")+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consist_yield_analysis, color = "red")+
+  theme_bw()
+
+# site-specific EONRs statistic #
+summary(cc_consist_yield_analysis$applied_N)
+
+# Uniform EONR #
+
+cc_consist_uni <- cc_consist_yield %>% 
+  data.table() %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  #---- find each level of N can bring how much profit for the whole field ----#
+  .[, .(yield = mean(yield_max), profit = mean(profit)), by = applied_N] %>% 
+  #---- filter out the uniform N that brings the highest profit ----#
+  .[profit == max(profit), ] %>% 
+  .[, type := "uniform N rate"]
+
+cc_consist_uni
+
+
+## Estimate the EONR from OFPE ##
+
+gam_re <- gam(
+  yield_max
+  ~ s(applied_N),
+  data = cc_consistant_td
+)
+
+
+eval_data <- data.frame(
+  applied_N = seq(
+    0, 240, by = 5
+  )
+) %>% 
+  data.table() %>% 
+  .[, y_hat := predict(gam_re, newdata = ., se = TRUE)]
+
+cc_consistant_estimate <- eval_data %>% 
+  .[, profit := y_hat*corn_price - applied_N*N_price] %>% 
+  filter(profit == max(profit)) %>% 
+  .[, type := "ofpe estimated N rate"]
+  
+```
+
+```{r cache=TRUE}
+# Compare the 3 types of EONRs together for cc ofpe in previous years
+
+# site-specific EONRs statistic #
+summary(cc_consist_yield_analysis$applied_N)
+summary(cc_consist_yield_analysis$profit)
+
+# Uniform EONR #
+cc_consist_uni
+
+# Estimated EONR #
+cc_consistant_estimate
+
+```
+
+
+
+# Eonomic analysis for corn-soy ofpe setting
+
+```{r cache=TRUE}
+###---- upload the simulation result ----###
+cs_ofpe <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/N_Residual_APSIM/Codes/corn_soy_rotation/corn_soy_rotation.rds")
+
+###---- find the simulated true yield response curves ----###
+
+cs_ofpe_yield <- cs_ofpe %>% 
+  data.table() %>% 
+  .[year == 2019, .(yield_max = max(CropYieldMaize)), by = .(applied_N, plot_id)]
+
+
+###---- create N seq for trial designs ----###
+N_rates <- data.frame(
+    var_N = as.character(seq(0, 240, by = 5))
+  )
+
+number_plot <- 100
+
+set.seed(230829)
+###--- trial design ---###
+applied_N <- data.frame(
+  year_1 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_2 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_3 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_4 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  plot_id = seq(1, 100, by = 1)) %>% 
+  as.list()
+
+cs_ofpe_td <- data.frame(
+  applied_N = as.numeric(applied_N$year_4[1:40]),
+  plot_id = as.character(seq(1,40, by = 1))
+) %>% 
+  left_join(., cs_ofpe_yield, by = c("applied_N", "plot_id"))
+
+
+###---- Visualize the true yield responses and the estimated yield response from ofpe  ----###
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_td, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cs_ofpe_td, color = "blue")+
+  theme_bw()
+
+```
+
+
+```{r cache=TRUE}
+###---- Find the uniform EONR  ----###
+
+#--- set prices ---#
+corn_price <- 5
+N_price <- 6
+
+cs_ofpe_yield_analysis <- cs_ofpe_yield %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  group_by(plot_id) %>% 
+  filter(profit == max(profit))
+
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_td, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cs_ofpe_td, color = "blue")+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_yield_analysis, color = "red")+
+  theme_bw()
+
+# site-specific EONRs statistic #
+summary(cs_ofpe_yield_analysis$applied_N)
+
+# Uniform EONR #
+
+cs_ofpe_uni <- cs_ofpe_yield %>% 
+  data.table() %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  #---- find each level of N can bring how much profit for the whole field ----#
+  .[, .(yield = mean(yield_max), profit = mean(profit)), by = applied_N] %>% 
+  #---- filter out the uniform N that brings the highest profit ----#
+  .[profit == max(profit), ] %>% 
+  .[, type := "uniform N rate"]
+
+cs_ofpe_uni
+
+
+## Estimate the EONR from OFPE ##
+
+gam_re_cs <- gam(
+  yield_max
+  ~ s(applied_N),
+  data = cs_ofpe_td
+)
+
+
+eval_data_cs <- data.frame(
+  applied_N = seq(
+    0, 240, by = 5
+  )
+) %>% 
+  data.table() %>% 
+  .[, y_hat := predict(gam_re_cs, newdata = ., se = TRUE)]
+
+cs_ofpe_estimate <- eval_data_cs %>% 
+  .[, profit := y_hat*corn_price - applied_N*N_price] %>% 
+  filter(profit == max(profit)) %>% 
+  .[, type := "ofpe estimated N rate"]
+  
+```
+
+```{r cache=TRUE}
+# Compare the 3 types of EONRs together for cs ofpe in previous years
+
+# site-specific EONRs statistic #
+summary(cs_ofpe_yield_analysis$applied_N)
+summary(cs_ofpe_yield_analysis$profit)
+
+# Uniform EONR #
+cs_ofpe_uni
+
+# Estimated EONR #
+cs_ofpe_estimate
+
+```
+
+
+
+# Eonomic analysis for corn-soy consistent setting
+
+```{r cache=TRUE}
+###---- upload the simulation result ----###
+cs_consistent <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/N_Residual_APSIM/Codes/corn_soy_rotation/cs_consistent.rds")
+
+###---- find the simulated true yield response curves ----###
+
+cs_consist_yield <- cs_consistent %>% 
+  data.table() %>% 
+  .[year == 2019, .(yield_max = max(CropYieldMaize)), by = .(applied_N, plot_id)]
+
+
+###---- create N seq for trial designs ----###
+N_rates <- data.frame(
+    var_N = as.character(seq(0, 240, by = 5))
+  )
+
+number_plot <- 100
+
+set.seed(230829)
+###--- trial design ---###
+applied_N <- data.frame(
+  year_1 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_2 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_3 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_4 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  plot_id = seq(1, 100, by = 1)) %>% 
+  as.list()
+
+cs_consistant_td <- data.frame(
+  applied_N = as.numeric(applied_N$year_4[1:40]),
+  plot_id = as.character(seq(1,40, by = 1))
+) %>% 
+  left_join(., cs_consist_yield, by = c("applied_N", "plot_id"))
+
+
+###---- Visualize the true yield responses and the estimated yield response from ofpe  ----###
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consist_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consist_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consistant_td, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cs_consistant_td, color = "blue")+
+  theme_bw()
+
+```
+
+
+```{r cache=TRUE}
+###---- Find the uniform EONR  ----###
+
+#--- set prices ---#
+corn_price <- 5
+N_price <- 6
+
+cs_consist_yield_analysis <- cs_consist_yield %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  group_by(plot_id) %>% 
+  filter(profit == max(profit))
+
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consist_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consist_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consistant_td, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cs_consistant_td, color = "blue")+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consist_yield_analysis, color = "red")+
+  theme_bw()
+
+# site-specific EONRs statistic #
+summary(cs_consist_yield_analysis$applied_N)
+
+# Uniform EONR #
+
+cs_consistent_uni <- cs_consist_yield %>% 
+  data.table() %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  #---- find each level of N can bring how much profit for the whole field ----#
+  .[, .(yield = mean(yield_max), profit = mean(profit)), by = applied_N] %>% 
+  #---- filter out the uniform N that brings the highest profit ----#
+  .[profit == max(profit), ] %>% 
+  .[, type := "uniform N rate"]
+
+cs_consistent_uni
+
+
+## Estimate the EONR from OFPE ##
+
+gam_re_cs <- gam(
+  yield_max
+  ~ s(applied_N),
+  data = cs_consistant_td
+)
+
+
+eval_data_cs <- data.frame(
+  applied_N = seq(
+    0, 240, by = 5
+  )
+) %>% 
+  data.table() %>% 
+  .[, y_hat := predict(gam_re_cs, newdata = ., se = TRUE)]
+
+cs_consistent_estimate <- eval_data_cs %>% 
+  .[, profit := y_hat*corn_price - applied_N*N_price] %>% 
+  filter(profit == max(profit)) %>% 
+  .[, type := "ofpe estimated N rate"]
+
+
+cs_consistent_estimate
+  
+```
+
+```{r cache=TRUE}
+# Compare the 3 types of EONRs together for cs ofpe in previous years
+
+# site-specific EONRs statistic #
+summary(cs_consist_yield_analysis$applied_N)
+summary(cs_consist_yield_analysis$profit)
+
+# Uniform EONR #
+cs_consistent_uni
+
+# Estimated EONR #
+cs_consistent_estimate
+
+```
 
 
 
