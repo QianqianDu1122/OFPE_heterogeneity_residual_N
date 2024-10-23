@@ -1,0 +1,99 @@
+---
+title: ""
+# author: Qianqian Du, Taro Mieno, David S.Bullock
+abstract: ""
+output:
+  bookdown::word_document2:
+    # reference_docx: word-style.docx
+    pandoc_args: ["-Fpandoc-crossref"]
+bibliography: N_residual.bib
+header-includes:
+  - "\\usepackage{amsmath}"
+# citation_package: natbib
+# csl: "elsevier-harvard.csl"
+---
+
+```{r echo = F, results='hide', message = F}
+library(knitr)
+library(here)
+?rmarkdown::pandoc_available
+# === set wd ===#
+# Notes: not really necessary to set the working directory as long as this Rmd file is part of an R project and the evaluation directory is set to "Project".
+
+opts_knit$set(root.dir = here())
+
+options(htmltools.dir.version = FALSE)
+options(knitr.duplicate.label = "allow")
+
+opts_chunk$set(
+  fig.align = "center", 
+  fig.retina = 5,
+  warning = F, 
+  message = F,
+  cache = F,
+  echo = F,
+  comment = '', 
+  fig.width = 6, 
+  fig.height = 6
+  )
+
+```
+
+# Literature Review
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# References {-}
+
+<div id="refs"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
