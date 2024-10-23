@@ -13,3 +13,4 @@ shared_by_Miguez/
 *.DS_Store
 .Rproj.user
 *.RData
+*.Rhistory
