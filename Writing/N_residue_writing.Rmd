@@ -39,38 +39,45 @@ opts_chunk$set(
 
 ```
 
-# Literature Review
+# Introduction
+
+ + There have been studies showing that residual N in soil may affect the next year's EONR.
+ + OFPE is a useful way providing information for agricultrual practices, and it is getting more popular.
+ + No studies have explored the impact of OFPE on fields, other than providing fields information and finding EOIRs
+ + We used APSIM and found that running OFPE can create field heterogenouity, which can increase the vatiation of EONRs for the next year due to different N applications in each site and then result in different residual N in soil. 
+    + This is more relavent to corn-corn rotation
+    + For corn-soy rotation, the field heterogenouity still exsits, but it is way smaller than corn-corn
+    + The degree/range of field heterogenouity caused by residual N varys by precipitation.
++ Implication: 
+  + Corn-soy rotation can mitigate field heterogenouity due to OFPE
+  + Do not use consistent trial design over years
+  + How much N applied this year will affect the yield response in the next year, they are continous events. Future studies can work on finding EONR considering multiple years? 
 
 
+# Material and Methods
+
++ APSIM's general info in a few sentences with citations
++ APSIM prameters setup for simulations
+  + soil
+  + crop
+  + weather
+  + mangement
++ Trial design 
+  + random trial design over years
+  + same trial design over years
+  + corn-corn rotation 
+  + corn-soy rotation
++ Simulate true yield response functions and estimate the 3 kinds of EONR
 
 
+# Results
+
++ True yield response functions under 4 scenarios
++ Estimated EONRs and compare them
++ optimal- under wet years vs dry years.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Conclusion 
 
 
 
