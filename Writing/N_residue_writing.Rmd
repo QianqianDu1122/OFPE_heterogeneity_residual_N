@@ -39,19 +39,31 @@ opts_chunk$set(
 
 ```
 
+# Abstract 
+
+Nitrogen (N) is a crucial input in corn production and is considered the most essential nutrient for crop growth and development. Economically optimal N rates vary substantially within and across fields, and with the increasing adoption of variable rate technology by farmers, on-farm precision experiments (OFPE) have become valuable tools for determining N rates that maximize economic profits while minimizing environmental impacts. However, despite the insights gained from OFPE, no studies have examined its impact on the fields where these experiments were conducted. This study uses the Agricultural Production Systems sIMulator (APSIM) to simulate the OFPE process on a hypothetical field with corn-corn and corn-soybean rotations, using a completely randomized trial design across years and a consistent trial design, respectively. Results indicate that in OPFE, applying variable N rates can lead to varying amounts of residual N in the soil, which in turn affects the following year’s yield response to N on that site. In other words, conducting OFPE can introduce heterogeneity within the field. This heterogeneity is most pronounced in corn-corn rotations with a consistent trial design each year, followed by corn-corn rotations using a randomized trial design each year. When soybeans are grown between two years of corn, precipitation can help wash away residual N, and, as legumes, soybeans play a vital role in enriching soil nitrogen levels through biological nitrogen fixation. Therefore, fields with corn-soy rotations exhibit less heterogeneity due to the conduction of OFPE. We also compared the site-specific EONR, uniform EONR, and estimated EONR from observed OFPE data in each cropping scenario. Results show that field heterogeneity caused by OFPE can increase the variation in site-specific EONR, thereby increase the profit difference between site-specific and field uniform EONR. This field heterogeneity may also result in an estimated EONR from observed OFPE data that differs from the true field uniform EONR. However, we find that under the corn-soybean rotation system, the true uniform EONR and the OFPE estimated EONR show no difference.
+
+
+
+
+
 # Introduction
 
  + There have been studies showing that residual N in soil may affect the next year's EONR.
- + OFPE is a useful way providing information for agricultrual practices, and it is getting more popular.
+ + OFPE is a useful way to provide information for agricultrual practices, and it is getting more popular.
  + No studies have explored the impact of OFPE on fields, other than providing fields information and finding EOIRs
  + We used APSIM and found that running OFPE can create field heterogenouity, which can increase the vatiation of EONRs for the next year due to different N applications in each site and then result in different residual N in soil. 
-    + This is more relavent to corn-corn rotation
-    + For corn-soy rotation, the field heterogenouity still exsits, but it is way smaller than corn-corn
-    + The degree/range of field heterogenouity caused by residual N varys by precipitation.
+  + This is more relavent to corn-corn rotation
+  + For corn-soy rotation, the field heterogenouity still exsits, but it is way smaller than corn-corn
+  + The degree/range of field heterogenouity caused by residual N varys by precipitation.
 + Implication: 
   + Corn-soy rotation can mitigate field heterogenouity due to OFPE
   + Do not use consistent trial design over years
   + How much N applied this year will affect the yield response in the next year, they are continous events. Future studies can work on finding EONR considering multiple years? 
+  + This heterogenouity is caused by VRT, so, more VRT are used, more VRT are needed? 
+  + This may bring more attention to farmers in somewhere like IL? As the fields in IL have black, flat, and relatively more homogenous soil within the field. 
+  + Need more observations to esitimate EONR, the small plots may not reliable? 
+
 
 
 # Material and Methods
