@@ -53,23 +53,9 @@ As optimal input rates usually vary across and within fields, precision agricult
 
 Empirical studies have consistently shown that residual soil N levels are significantly attected by N fertilizer applications and vary with changes in  application rates [@hong2007economically; @ferguson2002site; @alotaibi2018economic; @belanger2003residual; @jokela1989corn]. @roth1990soil showed that soil residual N not only varies after the harvest of corn fertilized at different N rates but can also accumulate and be present in substantial amounts in the spring, indicating the need to consider residual soil N in N management. However, except the preplant soil nitrate test (PPNT) tool [@magdoff1984soil; @bundy1995soil; @schroder2000does], current N recommendation tools rarely account for the residual soil N from previous fertilizer applications when calculating economically optimal rates. Therefore, we suspect that applying variable nitrogen rates in OFPE may result in differing levels of residual soil nitrogen, which could, in turn, influence the following year’s yield response to applied nitrogen and affect the optimal rate for that site. This variation could potentially bias yield response estimations and the recommendations for economically optimal nitrogen rates (EONR) when using OFPE data. The main objective of this study is to examine the spatial and temporal heterogeneity in soil nitrogen caused by OFPE and its impact on economic evaluations. 
 
-We use the Agricultural Production Systems sIMulator (APSIM) to simulate the process of applying variable N on a hypothetical field with corn-corn and corn-soybean rotations, using a completely randomized trial design of N across years and a consistent trial design of N, respectively. Results show that soil N heterogeneity, caused by variable N application, is most pronounced in continuous corn rotations with a consistent trial design each year, followed by the continuous corn rotation field with randomized trial design each year. In contrast, fields with corn-soybean rotations exhibit less soil N heterogeneity, likely because soybeans, as legumes, play a vital role in enriching and balancing soil nitrogen levels through biological nitrogen fixation when grown between two years of corn. The presence of soil N heterogeneity increases the variability in site-specific economically optimal N rate (EONR), thereby increasing the profit difference between site-specific and field-uniform EONR. Consequently, the EONR estimated from observed OFPE data may differ from the true field-uniform EONR. However, in the corn-soybean rotation system, we find no significant difference between the true uniform EONR and the OFPE-estimated EONR. 
+We use the Agricultural Production Systems sIMulator (APSIM) to simulate the process of applying variable N on a hypothetical field with corn-corn and corn-soybean rotations, using a completely randomized trial design of N across years and a consistent trial design of N, respectively. Results show that soil N heterogeneity, caused by variable N application, did led to variation in yield response and EONRs. This effect was most pronounced in continuous corn rotations with a consistent trial design each year, followed by the continuous corn rotation field with randomized trial design each year. In contrast, fields with corn-soybean rotations exhibit less residual soil N heterogeneity, likely because soybeans, as legumes, play a vital role in enriching and balancing soil nitrogen levels through biological nitrogen fixation when grown between two years of corn. The presence of residual soil N heterogeneity increases the variability in site-specific economically optimal N rate (EONR), thereby increasing the profit difference between site-specific and field-uniform EONR. Consequently, the EONR estimated from observed OFPE data may differ from the true field-uniform EONR. However, in the corn-soybean rotation system, we find no significant difference between the true uniform EONR and the OFPE-estimated EONR. 
 
-
-
- + We used APSIM and found that running OFPE can create field heterogenouity, which can increase the variation of EONRs for the next year due to different N applications in each site and then result in different residual N in soil. 
-
-In this study, we tested the hypothesis 
-
-
-  + This is more relavent to corn-corn rotation
-  + For corn-soy rotation, the field heterogenouity still exsits, but it is way smaller than corn-corn
-  + The degree/range of field heterogenouity caused by residual N varys by precipitation.
-+ Implication: 
-  + Corn-soy rotation can mitigate field heterogenouity due to OFPE
-  +  use consistent trial design over years
-  + How much N applied this year will affect the yield response in the next year, they are continous events. Future studies can work on finding EONR considering multiple years? 
-
+These findings are important, as no studies have previously pointed out the issue that, beyond the information gained from OFPE, running OFPE itself can introduce spatial and temporal heterogeneity in soil N. This may complicate yield response and EONR estimations in subsequent growing seasons and could have long-term effects on fields where OFPE has been conducted. Growing soybeans between two years of corn production can help mitigate the heterogeneity mentioned above. This potential benefit of practicing a corn-soybean rotation has not been discussed in the previous literature and could provide valuable information to farmers when deciding between continuous corn planting and corn-soybean rotations. Furthermore, this study provides insights into the potential long-term effects of repeatedly conducting OFPE on the same field. For example, it may be advisable to avoid using the same trial design map over multiple years. Future studies are needed to explore methods for determining EONR that account for nitrogen residual dynamics over multiple years.
 
 
 # Material and Methods
@@ -87,29 +73,16 @@ The simulation process was consecutive to account for carry-over soil N effects 
 
 Weather could influence the yield response to N and soil N level grately. To isolate weather effects and make applied N level as the only variable in the simulation. We used actual 2019 daily weather data obtained from Daymet [@daymet] and replicated it six times, creating a 7-year simulation under same weather conditions each year. This approach ensures that any variance in yearly yield response is solely due to differences in residual nitrogen resulting from variable nitrogen applications. 
 
-
-
-+ Trial design 
-
 Two cropping systems were compared in this study: continuous corn (CC) rotation and corn-soybean (CS) rotation. Since the aim of this study is to examine the impact of variable rate N application on soil N residuals and its effect on yield response, only N application rates will be considered as a variable in the OFPE trials, with corn and soybean seeding rates kept consistent across fields and years.
 
 Each simulated N-OFPE trial included of six targeted N rates: 80, 128, 154, 190, 224, and 269 kg/ha. Two types of trial designs were used for the simulations: a completely randomized trial design and a consistent trial design over multiple years. The figure illustrates the trial design maps. In the consistent trial design scenario, plots that receive a higher rate of N continue to receive more N each year, leading to an expected higher residual N level. Consequently, a wider range of yield response variations is expected to be observed in the OFPE following the consistent trial design map.
 
-
-+ Simulate true yield response functions and estimate the 3 kinds of EONR
-
-
 In each croping system with a trial design, we compared the true site-spcific EONR and the true optimal uniform EONR using simulated yield response data gennerated by APSIM, as well as the estimated uniform EONR using observed OFPE data gennerated from APSIM. 
-
-
-
-  + equations for calculating the 3 EONRs and also GAM for estimating the EONR
   
 $$
-
 EONR_{i}^{VR} = \underset{N_i}{\text{Argmax}} \ \{\text{yield}_i (N_i) * p_c \ - \ N_i * p_{n} \}, \quad \text{for } i = 1, 2, 3, \ldots, 200.
-
 $$
+
 $$
 EONR^{UR} = \underset{N}{\text{Argmax}} \ \{ \sum_{i=1}^{200} yield_i (N) * p_c \ - N*p_{n} \}
 $$
@@ -129,6 +102,12 @@ $$
 # Results
 
 + True yield response functions under 4 scenarios
+In this study, we tested the hypothesis 
+  + This is more relavent to corn-corn rotation
+  + For corn-soy rotation, the field heterogenouity still exsits, but it is way smaller than corn-corn
+  + The degree/range of field heterogenouity caused by residual N varys by precipitation.
+
+
   + Results indicate that in OPFE, the soil N heterogeneity is most pronounced in corn-corn rotations with a consistent trial design each year, followed by corn-corn rotations using a randomized trial design each year. Fields with corn-soy rotations exhibit less heterogeneity due to variable N application.  This is likely because when soybeans are grown between two years of corn, as legumes, soybeans play a vital role in enriching soil nitrogen levels through biological nitrogen fixation.
 + Estimated EONRs and compare them
 + optimal- under wet years vs dry years.
