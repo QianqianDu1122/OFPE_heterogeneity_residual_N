@@ -72,7 +72,6 @@ In this study, we tested the hypothesis
 
 
 
-
 # Material and Methods
 
 ## The APSIM Modeling Platform and Crop Models
@@ -80,34 +79,52 @@ In this study, we tested the hypothesis
 The Agricultural Production Systems sIMulator (APSIM) is an open-source, advanced agricultural systems simulator that integrates various process-based models within a modular framework [@holzworth2014apsim; @keating2003overview]. Further details on APSIM and its performance across various studies are available at http://www.apsim.info. The crop models in APSIM simulate crop growth by capturing a comprehensive set of physiological processes, including phenology, organ development, and water and nutrient uptake, among others. These processes operate on a daily time step and respond to environmental conditions and management practices. By accounting for a broad spectrum of growth factors, APSIM provides an accurate and dynamic view of how crops interact with their environment, allowing us to examine how applied fertilizer nitrogen may influence residual soil nitrogen accumulation in the spring and, consequently, affect yield response later in the growing season [@keating2003overview; @holzworth2014apsim].
 
 
-The crop models used in this study include corn [@carberry1991tailoring] and soybean [@robertson1998simulating] crop models. The SOILN module [@probert1998apsim] in APSIM was used to model soil N and C cycling, as well as to simulate nitrogen mineralization from soil organic matter, thereby generating the nitrogen supply available to a crop from the soil. Clarion loam soil was used as the soil type in the simulated field, soil profile information can be obtained from https://websoilsurvey.sc.egov.usda.gov/App/HomePage.htm. 
+The crop models used in this study include corn [@carberry1991tailoring] and soybean [@robertson1998simulating] crop models. The SOILN module [@probert1998apsim] in APSIM was used to model soil N and C cycling, as well as to simulate nitrogen mineralization from soil organic matter, thereby generating the nitrogen supply available to a crop from the soil. Clarion loam soil was used as the soil type in the simulated field, soil profile information can be obtained from https://websoilsurvey.sc.egov.usda.gov/App/HomePage.htm. Simulations were performed in a hypothetical field at a rainfed location in the US Midwest. 
 
 
-The simulation process was consecutive to account for carry-over effects for seven years without annual re-initialization between each growing season. The crop management prameters were held constant across years for each crop type. planting depth was cm for corn and cm for soybean. Plant polulation was  and plants $m^{2}$ for corn and soysean, respectively. Tillage operations. 
+The simulation process was consecutive to account for carry-over soil N effects for seven years without annual re-initialization between each growing season. The following crop management prameters were held constant across years for each crop type. Planting depth was 50 mm for both corn and soybean. Plant polulation was 8 and 30 plants $m^{-2}$ for corn and soysean, respectively. Crops were planted on April 22nd and harvest on October 4th each year. Row spacing was 760 mm for both corn and soybean. Nitrogen fertilizer was applied near planting on May 5th and was only applied to corn. 
 
 
-
-
-Weather could influence the yield response to N and soil N level grately. To isolate this confounder and make applied N level as the only variable in the simulation. We 
-
+Weather could influence the yield response to N and soil N level grately. To isolate weather effects and make applied N level as the only variable in the simulation. We used actual 2019 daily weather data obtained from Daymet [@daymet] and replicated it six times, creating a 7-year simulation under same weather conditions each year. This approach ensures that any variance in yearly yield response is solely due to differences in residual nitrogen resulting from variable nitrogen applications. 
 
 
 
-
-
-+ APSIM prameters setup for simulations
-  + soil
-  + crop
-  + weather
-  + mangement
 + Trial design 
-  + random trial design over years
-  + same trial design over years
-  + corn-corn rotation 
-  + corn-soy rotation
-+ Simulate true yield response functions and estimate the 3 kinds of EONR
-  + equations for calculating the 3 EONRs
 
+Two cropping systems were compared in this study: continuous corn (CC) rotation and corn-soybean (CS) rotation. Since the aim of this study is to examine the impact of variable rate N application on soil N residuals and its effect on yield response, only N application rates will be considered as a variable in the OFPE trials, with corn and soybean seeding rates kept consistent across fields and years.
+
+Each simulated N-OFPE trial included of six targeted N rates: 80, 128, 154, 190, 224, and 269 kg/ha. Two types of trial designs were used for the simulations: a completely randomized trial design and a consistent trial design over multiple years. The figure illustrates the trial design maps. In the consistent trial design scenario, plots that receive a higher rate of N continue to receive more N each year, leading to an expected higher residual N level. Consequently, a wider range of yield response variations is expected to be observed in the OFPE following the consistent trial design map.
+
+
++ Simulate true yield response functions and estimate the 3 kinds of EONR
+
+
+In each croping system with a trial design, we compared the true site-spcific EONR and the true optimal uniform EONR using simulated yield response data gennerated by APSIM, as well as the estimated uniform EONR using observed OFPE data gennerated from APSIM. 
+
+
+
+  + equations for calculating the 3 EONRs and also GAM for estimating the EONR
+  
+$$
+
+EONR_{i}^{VR} = \underset{N_i}{\text{Argmax}} \ \{\text{yield}_i (N_i) * p_c \ - \ N_i * p_{n} \}, \quad \text{for } i = 1, 2, 3, \ldots, 200.
+
+$$
+$$
+EONR^{UR} = \underset{N}{\text{Argmax}} \ \{ \sum_{i=1}^{200} yield_i (N) * p_c \ - N*p_{n} \}
+$$
+
+Where $yield_i$ is the yield level in site $i$ generated by APSIM simulations given by the applied N level. $p_c$ and $p_n$ represents corn price and N price, respectively. 
+
+However, in reality, true yield responses are not observed, as we can only observe one yield level from each site. With the observed OFPE data, we estimate the field yield response using a Generalized Additive Model (GAM) [@hastie2017generalized], specified as Equation , where $s(N)$ is a smooth function of N rates in OFPE, and $u$ is the random error term. In stead of assuming strict parametric formulas, the GAM approach allows for flexible modeling of the relationship between yield and N by using data-driven functions. This flexibility is particularly useful for capturing complex yield response curves that may not be well-represented by traditional linear or polynomial models. We then estimate the uniform EONR based on the estimated yield response, denoted as $\widehat{EONR^{UR}}$. Estimation process is listed below.
+
+$$
+yield = s(N) + u,
+$$
+
+$$
+\widehat{EONR^{UR}} = \underset{N}{\text{Argmax}} \  [\widehat{yield(N)} * p_c \ - \ N*P_n] 
+$$
 
 # Results
 
