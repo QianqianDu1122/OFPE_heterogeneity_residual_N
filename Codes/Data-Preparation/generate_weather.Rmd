@@ -4,6 +4,13 @@ author: "Qianqian Du"
 date: "2024-03-22"
 output: html_document
 ---
+# Note! DO NOT USE DATA.TABLE WITH MET FILE!! 
+```{r}
+library(apsimx)
+library(tidyverse)
+library(data.table)
+library(ggplot2)
+```
 
 ```{r}
 
@@ -25,14 +32,14 @@ ggplot(data = weather_overlook)+
 ```
 
 
-
 ```{r}
 ###---- choose the year of 2019's weather and replicate it for other years ----###
-weather_2019 <- true_weather[year == 2019, ]
+# weather_2019 <- true_weather %>% 
+#   data.table() %>% 
+#   .[year == 2019, ]
 
 weather_2019 <- true_weather %>% 
-  filter(year == 2019) %>% 
-  dplyr::select(year, day, radn, maxt, mint, rain)
+  filter(year == 2019)
 
 
 class(weather_2019)
@@ -54,8 +61,6 @@ weather_2016 <- weather_2019 %>%
 
 weather_2016[366, 2] <- 366
 weather_2016$year <- as.integer(2016)
-
-tail(weather_2020)
 
 weather_2017 <- weather_2019
 weather_2017$year <- as.integer(2017)
@@ -138,11 +143,9 @@ fake_weather <- weather_2015 %>%
 
 nrow(fake_weather)
 
-tail(weather_2020)
-
 
 ##====== write the weather into a met data file =====##
-write_apsim_met(fake_weather, wrt.dir = write_dir, filename = "fake_weather.met")
+# write_apsim_met(fake_weather, wrt.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data", filename = "fake_weather.met")
 
 ```
 
