@@ -1,0 +1,106 @@
+---
+title: "viz_yield_responses"
+author: "Qianqian Du"
+date: "2024-11-21"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+```
+
+# load the datasets
+```{r}
+###====== corn-corn consistent B_105 ======#
+cc_consisten_b105 <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_corn_consistent_B105.rds")
+
+cc_ofpe_b105 <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_corn_ofpe_B105.rds")
+
+cs_consistent_b105 <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_consistent_B105.rds")
+
+cs_ofpe_b105 <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_ofpe_B105.rds")
+
+
+```
+
+
+# process the daily data
+```{r}
+cc_consisten_b105_yield <- cc_consisten_b105 %>% 
+  data.table() %>% 
+  .[year == 2019, ] %>% 
+  .[, .(yield_max = max(CropYield)*10), by = .(applied_N, plot_id)] # times ten to convert from g/m^2 to kg/ha
+
+
+cc_ofpe_b105_yield <- cc_ofpe_b105 %>% 
+  data.table() %>% 
+  .[year == 2019, ] %>% 
+  .[, .(yield_max = max(CropYield)*10), by = .(applied_N, plot_id)]
+
+
+cs_consistent_b105_yield <- cs_consistent_b105 %>% 
+  data.table() %>% 
+  .[year == 2019, ] %>% 
+  .[, .(yield_max = max(CropYieldMaize)*10), by = .(applied_N, plot_id)]
+
+
+cs_ofpe_b105_yield <- cs_ofpe_b105 %>% 
+  data.table() %>% 
+  .[year == 2019, ] %>% 
+  .[, .(yield_max = max(CropYieldMaize)*10), by = .(applied_N, plot_id)]
+
+
+```
+
+
+# Create the figures to visualize the yield responses under different situations 
+```{r}
+viz_cc_consistent_b105 <- ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), data = cc_consisten_b105_yield, size = 0.9)+
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), data = cc_consisten_b105_yield)+
+  theme_bw()+
+  ylab("Yield (kg/ha)")+
+  xlab("Applied N (kg/ha)")
+
+viz_cc_consistent_b105
+
+
+viz_cc_ofpe_b105 <- ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max), data = cc_ofpe_b105_yield, size = 0.9)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_b105_yield, size = 0.4)+
+  theme_bw()+
+  ylab("Yield (kg/ha)")+
+  xlab("Applied N (kg/ha)")
+
+viz_cc_ofpe_b105
+
+
+viz_cs_consistent_b105 <- ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), data = cs_consistent_b105_yield, size = 0.9)+
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), data = cs_consistent_b105_yield, size = 0.4)+
+  theme_bw()+
+  ylab("Yield (kg/ha)")+
+  xlab("Applied N (kg/ha)")
+
+viz_cs_consistent_b105
+
+
+viz_cs_ofpe_b105 <- ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max), data = cs_ofpe_b105_yield, size = 0.9)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_b105_yield, size = 0.4)+
+  theme_bw()+
+  ylab("Yield (kg/ha)")+
+  xlab("Applied N (kg/ha)")
+
+viz_cs_ofpe_b105
+
+```
+
+
+
+
+
+
+
