@@ -1,0 +1,579 @@
+---
+title: "ofpe_true_yrp"
+author: "Qianqian Du"
+date: "2024-04-01"
+output: html_document
+---
+
+
+
+# uplode the packages
+```{r, message=FALSE, warning=FALSE}
+
+# update the apsimx package as the latest version
+# library(remotes)
+# remotes::install_github('femiguez/apsimx')
+
+library(apsimx)
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+library(oce)
+library(lubridate)
+library(gam)
+``` 
+
+# Setup APSIM path and template 
+```{r}
+
+### ============ set path to the file ============ ###
+extd.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/New_cultivar"
+
+write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/New_cultivar"
+
+
+###========== Check parameters of the file =========###
+inspect_apsimx("consistant_CC_newC.apsimx", src.dir = extd.dir, node = "Clock")
+
+
+edit_apsimx("consistant_CC_newC.apsimx", src.dir = extd.dir,
+              wrt.dir = write_dir, node = "Clock",
+              parm = "Start", value = "01/01/2015")
+
+edit_apsimx("consistant_CC_newC-edited.apsimx", src.dir = extd.dir,
+              wrt.dir = write_dir, node = "Clock",
+              parm = "End", value = "12/31/2019", overwrite = TRUE)
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx", src.dir = extd.dir, node = "Clock")
+
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx", src.dir = extd.dir, node = "Weather")
+
+edit_apsimx("consistant_CC_newC-edited.apsimx", src.dir = extd.dir,
+              wrt.dir = write_dir, node = "Weather",
+              value = "fake_weather.met", overwrite = TRUE)
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx", src.dir = extd.dir, node = "Weather")
+
+```
+
+# Simulations
+```{r}
+###---- create the dataset to store the result ----###
+final_result <- data.frame()
+
+N_rates <- list(seq(0, 270, by = 30))
+N_rates_by5 <- list(seq(0, 240, by = 5))
+
+for (i in 1:length(N_rates[[1]])) {
+
+N = as.character(N_rates[[1]][i])
+
+new.date <- "2015-05-05"
+# new.action <- '[Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
+new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+# new.line <- '2015-05-05 [Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
+new_line <- paste0("2015-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(3, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(3, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(3, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(3, 'Date'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(3, 'Action'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(3, 'Line'))
+
+
+##--------------- change the 2nd year's fertilizer amount -------------##
+new.date <- "2016-05-05"
+new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("2016-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(11, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(11, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(11, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(11, 'Date'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(11, 'Action'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(11, 'Line'))
+
+
+#--------------- change the 3rd year's fertilizer amount -------------##
+new.date <- "2017-05-05"
+new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("2017-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(19, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(19, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(19, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(19, 'Date'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(19, 'Action'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(19, 'Line'))
+
+
+  # inner loop is to get the true yield response function for each plot, i is the N rate applied for that plot.
+
+  # for (j in 1:length(N_rates_by5[[1]])) {
+    
+
+    ##--------------- change the 4th year's fertilizer amount -------------##
+
+new.date <- "2018-05-05"
+new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("2018-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(27, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(27, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(27, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(27, 'Date'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(27, 'Action'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(27, 'Line'))
+
+
+  for (j in 1:length(N_rates_by5[[1]])) {
+    
+    # j = 1
+    
+  new.date <- "2019-05-05"
+  new.action <- paste0("[Fertiliser].Apply(Amount: ",N_rates_by5[[1]][j],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+  new_line <- paste0("2019-05-05 [Fertiliser].Apply(Amount: ",N_rates_by5[[1]][j],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(35, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(35, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("consistant_CC_newC-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(35, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(35, 'Date'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(35, 'Action'))
+
+inspect_apsimx("consistant_CC_newC-edited.apsimx",
+               node = "Operations",
+               parm = list(35, 'Line'))
+
+  print(i)
+  print(j)
+  
+#######============== Run simulations =============#######
+simulation <- apsimx("consistant_CC_newC-edited.apsimx", src.dir = write_dir, value = "Report") %>% 
+  data.table()
+  
+
+#######============== Clean simulation results =============#######
+  simulation_data <- simulation %>%  
+  setnames(c("Soil.Nutrient.MineralN(1)", "Soil.Nutrient.MineralN(2)", "Soil.Nutrient.MineralN(3)", "Soil.Nutrient.MineralN(4)", "Soil.Nutrient.MineralN(5)", "Soil.Nutrient.MineralN(6)", "Soil.Nutrient.MineralN(7)", "Soil.Nutrient.MineralN(8)"), c("Mineral_1", "Mineral_2", "Mineral_3","Mineral_4","Mineral_5","Mineral_6","Mineral_7", "Mineral_8"), skip_absent = TRUE) %>% 
+  .[, .(Date, NO3, NO3Leaching, AnnualNleaching, AnnualSoilMineral, AnnualNfertilizer, TotalMineralization, SoilMineralization, CropYield, Mineral_1, Mineral_2, Mineral_3, Mineral_4, Mineral_5, Mineral_6, Mineral_7, Mineral_8)] %>% 
+  .[, year := as.numeric(format(simulation$Date, "%Y"))] %>%
+  .[, month := as.numeric(format(simulation$Date, "%m"))] %>% 
+  .[, day := as.numeric(format(simulation$Date, "%d"))] %>% 
+  .[, plot_id := as.character(i)] %>% 
+  # .[, applied_N_i := N_rates[[1]][i]] %>%
+  .[, applied_N := sum(unique(AnnualNfertilizer)), by = year]
+
+
+final_result <- rbind(final_result, simulation_data)
+
+  }
+
+}
+
+final_result$applied_N %>% unique()
+final_result$plot_id %>% unique()
+# saveRDS(final_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_corn_consistent_B105.rds")
+
+
+ggplot(data = final_result)+
+  geom_point(aes(x =Date, y = CropYield))
+
+
+see_result <- final_result %>% 
+  .[year == 2019, ] %>% 
+  group_by(applied_N, plot_id) %>%
+  summarise(yield_max = max(CropYield))
+
+max(simulation$CropYield)
+
+ggplot(see_result)+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id))
+
+```
+
+```{r}
+
+consist_corn_corn <- final_result[year == 2018, ] %>% 
+  .[, .(yield_max = max(CropYield)), by = .(plot_id, applied_N)]
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), data = consist_corn_corn)+
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), data = consist_corn_corn)+
+  theme_bw()
+
+```
+
+# This is the result of running ofpe in 2018 to get the estimated yield response
+```{r}
+
+## --- 2018 --- ##
+ofpe_2018 <- readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/ofpe_true_yrp/ofpe_2015_2018.rds") %>% 
+  data.table() %>% 
+  .[year == 2018, ] %>%
+  .[, c("applied_N", "plot_id")]
+
+combine$plot_id <- as.character(combine$plot_id)
+
+ofpe_2018 <- left_join(ofpe, combine, by = c("applied_N", "plot_id"))
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield), data = ofpe_2018)+
+  geom_smooth(aes(x = applied_N, y = yield), data = ofpe_2018)
+
+
+
+## --- 2017 --- ##
+
+ofpe_2017 <- data.frame(
+  applied_N = applied_N[[3]], 
+  plot_id = applied_N[[5]]
+)
+
+
+ofpe_2017$plot_id <- as.character(ofpe_2017$plot_id)
+ofpe_2017$applied_N <- as.numeric(ofpe_2017$applied_N)
+
+ofpe_2017 <- left_join(ofpe_2017, final_result_2017, by = c("applied_N", "plot_id"))
+
+
+
+## --- 2016 --- ##
+
+ofpe_2016 <- data.frame(
+  applied_N = applied_N[[2]], 
+  plot_id = applied_N[[5]]
+)
+
+
+ofpe_2016$plot_id <- as.character(ofpe_2016$plot_id)
+ofpe_2016$applied_N <- as.numeric(ofpe_2016$applied_N)
+
+ofpe_2016 <- left_join(ofpe_2016, final_result_2016, by = c("applied_N", "plot_id"))
+
+```
+
+
+# Look at the result of each plot's true yield response
+
+```{r}
+
+# combine <- rbind(simulation_data, simulation_data_2, simulation_data_3, simulation_data_4, simulation_data_5,
+#                     simulation_data_6, simulation_data_7,simulation_data_8, simulation_data_9, simulation_data_10)
+
+# saveRDS(combine, "/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/ofpe_true_yrp/simulations_200.rds")
+
+combine <- readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/ofpe_true_yrp/simulations_200.rds")
+
+
+combine$applied_N <- as.numeric(combine$applied_N)
+ofpe_2018$applied_N <- as.numeric(ofpe_2018$applied_N)
+
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield), data = final_result_2016, size = 0.3)+
+  geom_line(aes(x = applied_N, y = yield, group = plot_id), data = final_result_2016, size = 0.3)+
+  geom_point(aes(x = applied_N, y = yield), data = ofpe_2016, color = "blue")+
+  geom_smooth(aes(x = applied_N, y = yield), data = ofpe_2016, size = 1.2)+
+  ggtitle("2016, the 2rd year, wet year")+
+  theme_bw()
+
+
+###------ plot the yield response by initial NO3 ------###
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = combine)+
+  geom_line(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = combine)
+
+ggplot()+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = combine)+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = combine)+
+  theme_bw()
+
+
+###------ plot the yield response by initial NO3 and the ofpe yield response------###
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = combine)+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = combine)+
+  geom_point(aes(x = applied_N, y = yield), data = ofpe_2018)+
+  geom_line(aes(x = applied_N, y = yield), data = ofpe_2018)
+
+
+```
+
+
+# The 200 plots results are showing above, below is just for seeing each 20 plots, in case we have to look at them closer, but not useful (just ignore the codes below).
+
+```{r}
+
+### ======= The first 20 locations =====###
+simulation_data <- readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/ofpe_true_yrp/final_result_1.rds") %>% 
+  data.table() %>% 
+  .[year == 2018, ] %>%
+  mutate(plot_id = (row_number() - 1) %/% 3650 + 1) %>% 
+  .[, .(yield = max(CropYield), NO3, Date), by = c("plot_id", "applied_N")] %>% 
+  .[Date == '2018-05-04', ] %>% 
+  mutate(NO3_group = case_when(NO3 < 25 ~ "Low",
+                               NO3 >= 25 & NO3 < 30 ~ "Med", 
+                               NO3 >= 30 ~ "High"))
+
+
+quantile(simulation_data$NO3)
+
+###------ plot the yield response by each plot------###
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield, color = factor(plot_id)), data = simulation_data)+
+  geom_line(aes(x = applied_N, y = yield, color = factor(plot_id)), data = simulation_data)+
+  geom_point(aes(x = applied_N, y = yield), data = ofpe_2018)+
+  geom_line(aes(x = applied_N, y = yield), data = ofpe_2018)
+
+###------ plot the yield response by initial NO3 ------###
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data)+
+  geom_line(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data)
+
+ggplot()+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data)+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data)+
+  theme_bw()
+
+
+```
+
+```{r}
+### ======= The second 20 locations =====###
+simulation_data_7 <- readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/ofpe_true_yrp/final_result_7.rds") %>% 
+  data.table() %>% 
+  .[year == 2018, ] %>%
+  mutate(plot_id = (row_number() - 1) %/% 3650 + 121) %>% 
+  .[, .(yield = max(CropYield), NO3, Date), by = c("plot_id", "applied_N")] %>% 
+  .[Date == '2018-05-04', ] %>% 
+  mutate(NO3_group = case_when(NO3 < 25 ~ "Low",
+                               NO3 >= 25 & NO3 < 30 ~ "Med", 
+                               NO3 >= 30 ~ "High"))
+
+
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield, color = factor(plot_id)), data = simulation_data_2)+
+  geom_line(aes(x = applied_N, y = yield, color = factor(plot_id)), data = simulation_data_2)+
+  geom_point(aes(x = applied_N, y = yield), data = ofpe_2018)+
+  geom_line(aes(x = applied_N, y = yield), data = ofpe_2018)
+
+
+###------ plot the yield response by initial NO3 ------###
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data_2)+
+  geom_line(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data_2)
+
+ggplot()+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data_2)+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data_2)+
+  theme_bw()
+
+
+```
+
+
+```{r}
+### ======= The third 20 locations =====###
+simulation_data_10 <- readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/ofpe_true_yrp/final_result_10.rds") %>%
+  data.table() %>% 
+  .[year == 2018, ] %>%
+  mutate(plot_id = (row_number() - 1) %/% 3650 + 181) %>% 
+  .[, .(yield = max(CropYield), NO3, Date), by = c("plot_id", "applied_N")] %>% 
+  .[Date == '2018-05-04', ] %>% 
+  mutate(NO3_group = case_when(NO3 < 25 ~ "Low",
+                               NO3 >= 25 & NO3 < 30 ~ "Med", 
+                               NO3 >= 30 ~ "High"))
+
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield, color = factor(plot_id)), data = simulation_data_3)+
+  geom_line(aes(x = applied_N, y = yield, color = factor(plot_id)), data = simulation_data_3)+
+  geom_point(aes(x = applied_N, y = yield), data = ofpe_2018)+
+  geom_line(aes(x = applied_N, y = yield), data = ofpe_2018)
+
+
+###------ plot the yield response by initial NO3 ------###
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data_3)+
+  geom_line(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data_3)
+
+ggplot()+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data_3)+
+  geom_smooth(aes(x = applied_N, y = yield, color = factor(NO3_group)), data = simulation_data_3)+
+  theme_bw()
+
+```
+
+
+
+
+
+
+
+
+
