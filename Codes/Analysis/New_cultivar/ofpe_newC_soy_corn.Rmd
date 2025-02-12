@@ -5,17 +5,6 @@ date: "2024-09-12"
 output: html_document
 ---
 
-# Objective:
-
-+ Run APSIM simulations through R, the trials follow OFPE setting- each plot/point randomly receive different amount of N rates in each year. Assuming homogeneous plots within fields.
-
-+ Run corn-soy rotation simulations 
-  + corn, ofpe setting
-  + soy 
-    + consistent seeding rates
-    + ofpe setting with seeding rates
-    
-
 # uplode the packages
 ```{r, message=FALSE, warning=FALSE}
 # update the apsimx package as the latest version
@@ -41,7 +30,7 @@ write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_r
 
 
 ###========== Check parameters of the file =========###
-inspect_apsimx("ofpe_newC_soy_corn.apsimx", src.dir = extd.dir, node = "Clock")
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx", src.dir = extd.dir, node = "Clock")
 
 
 edit_apsimx("ofpe_newC_soy_corn.apsimx", src.dir = extd.dir,
@@ -65,594 +54,6 @@ inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx", src.dir = extd.dir, node = "W
 
 ```
 
-# Consistent trial designs 
-The plots get more N always get more N.
-
-```{r}
-
-###=============================================================###
-#####======== change the N rates in Operations through R =========#
-###=============================================================###
-
-#### Editing just one operation, need to change all three ####
-
-simulation_result <- data.frame()
-
-N_rates <- list(seq(0, 270, by = 30))
-
-for (i in 1:length(N_rates[[1]])) {
-
-N = as.character(N_rates[[1]][i])
-
-new.date <- "2015-05-05"
-# new.action <- '[Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-# new.line <- '2015-05-05 [Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
-new_line <- paste0("2015-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(3, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(3, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(3, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(3, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(3, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(3, 'Line'))
-
-
-##--------------- change the 2nd year's N fertilizer amount -------------##
-new.date <- "2017-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2017-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(18, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(18, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(18, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(18, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(18, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(18, 'Line'))
-
-
-
-##--------------- change the 3rd year's N fertilizer amount -------------##
-new.date <- "2019-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2019-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(33, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(33, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(33, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(33, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(33, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(33, 'Line'))
-
-
-##--------------- change the 4th year's N fertilizer amount -------------##
-new.date <- "2021-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2021-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(48, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(48, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(48, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(48, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(48, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(48, 'Line'))
-
-
-##--------------- change the 5th year's N fertilizer amount -------------##
-new.date <- "2023-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2023-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(63, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(63, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(63, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(63, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(63, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(63, 'Line'))
-
-
-
-#######============== Run simulations =============#######
-simulation <- apsimx("ofpe_newC_soy_corn-edited.apsimx", src.dir = write_dir, value = "Report") %>% 
-  data.table()
-  
-#######============== Clean simulation results =============#######
-  simulation_data <- simulation %>%  
-  .[, applied_N := as.character(N)] %>% 
-  setnames(c("Soil.Nutrient.MineralN(1)", "Soil.Nutrient.MineralN(2)", "Soil.Nutrient.MineralN(3)", "Soil.Nutrient.MineralN(4)", "Soil.Nutrient.MineralN(5)", "Soil.Nutrient.MineralN(6)", "Soil.Nutrient.MineralN(7)", "Soil.Nutrient.MineralN(8)"), c("Mineral_1", "Mineral_2", "Mineral_3","Mineral_4","Mineral_5","Mineral_6","Mineral_7", "Mineral_8")) %>% 
-  .[, .(Date, applied_N, NO3, NO3Leaching, AnnualNleaching, AnnualSoilMineral, AnnualNfertilizer, TotalMineralization, SoilMineralization, CropYieldMaize, CropYieldSoy, Mineral_1, Mineral_2, Mineral_3, Mineral_4, Mineral_5, Mineral_6, Mineral_7, Mineral_8)] %>% 
-  .[, year := as.numeric(format(simulation$Date, "%Y"))] %>%
-  .[, month := as.numeric(format(simulation$Date, "%m"))] %>% 
-  .[, day := as.numeric(format(simulation$Date, "%d"))]
-
-
-###--- store the data ---###
-
-simulation_result <- rbind(simulation_result, simulation_data)
-
-}
-
-# saveRDS(simulation_result, "/Users/qianqiandu/Desktop/N_Residual_APSIM/Git_Controled/consistent_rate_trials/same_weather_cons_N.rds")
-
-
-```
-
-## Look at the result
-```{r}
-
-yield_analysis <- simulation_result %>% 
-  data.table() %>% 
-  .[, .(yield_M = max(CropYieldMaize), yield_S = max(CropYieldSoy)), by = c("year", "applied_N")]
-
-
-consistent_corn_response <- ggplot(data = yield_analysis[year != 2015 & yield_M != 0, ])+
-  geom_point(aes(x = as.numeric(applied_N), y = yield_M, color = factor(year)))+
-  geom_line(aes(x = as.numeric(applied_N), y = yield_M, color = factor(year)))+
-  ylab("yield Maize")+
-  ggtitle("corn yield response with consistent trial rates in CS rotation")+
-  theme_bw()
-
-
-consistent_soy_response <- ggplot(data = yield_analysis[year != 2015 & yield_S != 0, ])+
-  geom_point(aes(x = year, y = yield_S, color = (applied_N)))+
-  ylab("yield Soy")+
-  ggtitle("Soy yield with consistent trial rates in CS rotation")+
-  theme_bw()
-
-
-  
-
-ggplot(data = simulation_data)+
-  geom_point(aes(x =Date , y = CropYieldMaize), color = "yellow")+
-  geom_point(aes(x =Date , y = CropYieldSoy), color = "green")
-
-
-
-```
-
-
-# Run OFPE on N trials 
-```{r}
-N_rates <- data.frame(
-    var_N = as.character(seq(0, 270, by = 30))
-  )
-
-run_simpulation <- function(iteration_id, N_rates){
-  
-  number_years <- 5
-  
-  N <- sample(N_rates$var_N, number_years, replace = TRUE)
-
-
-new.date <- "2015-05-05"
-# new.action <- '[Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N[1],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-# new.line <- '2015-05-05 [Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
-new_line <- paste0("2015-05-05 [Fertiliser].Apply(Amount: ",N[1],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(3, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(3, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(3, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(3, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(3, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(3, 'Line'))
-
-
-##--------------- change the 2nd year's fertilizer amount -------------##
-new.date <- "2017-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N[2],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2017-05-05 [Fertiliser].Apply(Amount: ",N[2],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(18, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(18, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(18, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(18, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(18, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(18, 'Line'))
-
-
-
-
-##--------------- change the 3rd year's fertilizer amount -------------##
-new.date <- "2019-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N[3],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2019-05-05 [Fertiliser].Apply(Amount: ",N[3],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(33, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(33, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(33, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(33, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(33, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(33, 'Line'))
-
-
-
-##--------------- change the 4th year's fertilizer amount -------------##
-new.date <- "2021-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N[4],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2021-05-05 [Fertiliser].Apply(Amount: ",N[4],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(48, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(48, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(48, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(48, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(48, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(48, 'Line'))
-
-
-##--------------- change the 5th year's fertilizer amount -------------##
-new.date <- "2023-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N[5],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2023-05-05 [Fertiliser].Apply(Amount: ",N[5],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(63, 'Date'),
-            value = new.date,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(63, 'Action'),
-            value = new.action,
-            overwrite = TRUE)
-
-
-edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-            src.dir = write_dir,
-            wrt.dir = write_dir,
-            node = "Operations",
-            parm = list(63, 'Line'),
-            value = new.action,
-            overwrite = TRUE)
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(63, 'Date'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(63, 'Action'))
-
-inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
-               node = "Operations",
-               parm = list(63, 'Line'))
-
-
-
-#######============== Run simulations =============#######
-simulation <- apsimx("ofpe_newC_soy_corn-edited.apsimx", src.dir = write_dir, value = "Report") %>% 
-  data.table()
-  
-#######============== Clean simulation results =============#######
-  simulation_data <- simulation %>%  
-  # .[, applied_N := as.character(N)] %>%
-  setnames(c("Soil.Nutrient.MineralN(1)", "Soil.Nutrient.MineralN(2)", "Soil.Nutrient.MineralN(3)", "Soil.Nutrient.MineralN(4)", "Soil.Nutrient.MineralN(5)", "Soil.Nutrient.MineralN(6)", "Soil.Nutrient.MineralN(7)", "Soil.Nutrient.MineralN(8)"), c("Mineral_1", "Mineral_2", "Mineral_3","Mineral_4","Mineral_5","Mineral_6","Mineral_7", "Mineral_8"), skip_absent = TRUE) %>% 
-  .[, .(Date, NO3, NO3Leaching, AnnualNleaching, AnnualSoilMineral, AnnualNfertilizer, TotalMineralization, SoilMineralization, CropYieldMaize, CropYieldSoy, Mineral_1, Mineral_2, Mineral_3, Mineral_4, Mineral_5, Mineral_6, Mineral_7, Mineral_8)] %>% 
-  .[, year := as.numeric(format(simulation$Date, "%Y"))] %>%
-  .[, month := as.numeric(format(simulation$Date, "%m"))] %>% 
-  .[, day := as.numeric(format(simulation$Date, "%d"))] %>% 
-  .[, applied_N := sum(unique(AnnualNfertilizer)), by = year]
-
-simulation_data$iteration_id <- iteration_id  # Add iteration ID to the result
-
-return(simulation_data)
-
-}
-
-
-result_ofpe_trial <- lapply(1:80, function(x) run_simpulation(x, N_rates)) %>% 
-  rbindlist()
-
-# saveRDS(result_real_weather, file = "ofpe_real_weather.rds")
-
-```
-
-
-```{r}
-
-view_ofpe_result <- result_ofpe_trial %>% 
-  .[, .(yield_M = max(CropYieldMaize)), by = .(year, applied_N, iteration_id)]
-
-
-ggplot(data = view_ofpe_result[year != 2015 & yield_M != 0, ])+
-  geom_point(aes(x = applied_N, y = yield_M, color = factor(year)))+
-  geom_smooth(aes(x = applied_N, y = yield_M, color = factor(year)))+
-  ggtitle("OFPE yield response")+
-  theme_bw()
-
-
-```
-
-
 
 # True yield response functions in each subplot 
 
@@ -663,7 +64,7 @@ final_result <- data.frame()
 
 ###---- create N seq for trial designs ----###
 N_rates <- data.frame(
-    var_N = as.character(seq(0, 250, by = 5))
+    var_N = as.character(c(0, 50, 100, 150, 200, 250, 300))
   )
 
 number_plot <- 100
@@ -675,9 +76,12 @@ applied_N <- data.frame(
   year_2 = sample(N_rates$var_N, number_plot, replace = TRUE),
   year_3 = sample(N_rates$var_N, number_plot, replace = TRUE),
   year_4 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_5 = sample(N_rates$var_N, number_plot, replace = TRUE),
   plot_id = seq(1, 100, by = 1)) %>% 
   as.list()
 
+
+N_rates_by5 <- list(seq(0, 240, by = 5))
 
 #################################################
 ###====== Loop for running simulations =======###
@@ -686,8 +90,8 @@ applied_N <- data.frame(
 # each loop iteration is one plot, 200 plots, so j = 1:200
 
 # for (j in 1:length(applied_N_by_plots[[1]])) {
-for (j in 21:50) {  
-  
+for (j in 1:50) {  
+
 new.date <- "2015-05-05"
 # new.action <- '[Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
 new.action <- paste0("[Fertiliser].Apply(Amount: ",applied_N[[1]][j],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
@@ -700,7 +104,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(3, 'Date'),
+            parm = list(8, 'Date'),
             value = new.date,
             overwrite = TRUE)
 
@@ -709,7 +113,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(3, 'Action'),
+            parm = list(8, 'Action'),
             value = new.action,
             overwrite = TRUE)
 
@@ -718,23 +122,23 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(3, 'Line'),
+            parm = list(8, 'Line'),
             value = new.action,
             overwrite = TRUE)
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(3, 'Date'))
+               parm = list(8, 'Date'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(3, 'Action'))
+               parm = list(8, 'Action'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(3, 'Line'))
+               parm = list(8, 'Line'))
 
-  # for (i in 1:nrow(N_rates)) {
+
 ##--------------- change the 2nd year's fertilizer amount -------------##
 new.date <- "2017-05-05"
 new.action <- paste0("[Fertiliser].Apply(Amount: ",applied_N[[2]][j],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
@@ -744,7 +148,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(18, 'Date'),
+            parm = list(19, 'Date'),
             value = new.date,
             overwrite = TRUE)
 
@@ -753,7 +157,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(18, 'Action'),
+            parm = list(19, 'Action'),
             value = new.action,
             overwrite = TRUE)
 
@@ -762,36 +166,33 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(18, 'Line'),
+            parm = list(19, 'Line'),
             value = new.action,
             overwrite = TRUE)
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(18, 'Date'))
+               parm = list(19, 'Date'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(18, 'Action'))
+               parm = list(19, 'Action'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(18, 'Line'))
+               parm = list(19, 'Line'))
 
-  # inner loop is to get the true yield response function for each plot, i is the N rate applied for that plot.
-
-  for (i in 1:nrow(N_rates)) {
 
 #--------------- change the 3rd year's fertilizer amount -------------##
 new.date <- "2019-05-05"
-new.action <- paste0("[Fertiliser].Apply(Amount: ",N_rates[[1]][i],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2017-05-05 [Fertiliser].Apply(Amount: ",N_rates[[1]][i],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new.action <- paste0("[Fertiliser].Apply(Amount: ",applied_N[[3]][j],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("2019-05-05 [Fertiliser].Apply(Amount: ",applied_N[[3]][j],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
 
 edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(33, 'Date'),
+            parm = list(30, 'Date'),
             value = new.date,
             overwrite = TRUE)
 
@@ -800,7 +201,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(33, 'Action'),
+            parm = list(30, 'Action'),
             value = new.action,
             overwrite = TRUE)
 
@@ -809,25 +210,119 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(33, 'Line'),
+            parm = list(30, 'Line'),
             value = new.action,
             overwrite = TRUE)
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(33, 'Date'))
+               parm = list(30, 'Date'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(33, 'Action'))
+               parm = list(30, 'Action'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(33, 'Line'))
+               parm = list(30, 'Line'))
+
+
+#--------------- change the 4th year's fertilizer amount -------------##
+new.date <- "2021-05-05"
+new.action <- paste0("[Fertiliser].Apply(Amount: ",applied_N[[4]][j],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("2021-05-05 [Fertiliser].Apply(Amount: ",applied_N[[4]][j],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(41, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(41, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(41, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(41, 'Date'))
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(41, 'Action'))
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(41, 'Line'))
+
+
+# inner loop is to get the true yield response function for each plot, i is the N rate applied for that plot.
+
+  for (i in 1:length(N_rates_by5[[1]])) {
+    
+#--------------- change the 5th year's fertilizer amount -------------##
+new.date <- "2023-05-05"
+new.action <- paste0("[Fertiliser].Apply(Amount: ",N_rates_by5[[1]][i],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("20123-05-05 [Fertiliser].Apply(Amount: ",N_rates_by5[[1]][i],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(52, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(52, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(52, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(52, 'Date'))
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(52, 'Action'))
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(52, 'Line'))
+
 
 
 #######============== Run simulations =============#######
 print(j)
+print(i)
 
 simulation <- apsimx("ofpe_newC_soy_corn-edited.apsimx", src.dir = write_dir, value = "Report") %>% 
   data.table()
@@ -837,7 +332,6 @@ simulation <- apsimx("ofpe_newC_soy_corn-edited.apsimx", src.dir = write_dir, va
   simulation_data <- simulation %>%  
   .[, applied_N_i := N_rates[[1]][i]] %>%
   setnames(c("Soil.Nutrient.MineralN(1)", "Soil.Nutrient.MineralN(2)", "Soil.Nutrient.MineralN(3)", "Soil.Nutrient.MineralN(4)", "Soil.Nutrient.MineralN(5)", "Soil.Nutrient.MineralN(6)", "Soil.Nutrient.MineralN(7)", "Soil.Nutrient.MineralN(8)"), c("Mineral_1", "Mineral_2", "Mineral_3","Mineral_4","Mineral_5","Mineral_6","Mineral_7", "Mineral_8"), skip_absent = TRUE) %>% 
-  .[, .(Date, NO3, NO3Leaching, AnnualNleaching, AnnualSoilMineral, AnnualNfertilizer, TotalMineralization, SoilMineralization, CropYieldMaize, CropYieldSoy, Mineral_1, Mineral_2, Mineral_3, Mineral_4, Mineral_5, Mineral_6, Mineral_7, Mineral_8)] %>% 
   .[, year := as.numeric(format(simulation$Date, "%Y"))] %>%
   .[, month := as.numeric(format(simulation$Date, "%m"))] %>% 
   .[, day := as.numeric(format(simulation$Date, "%d"))] %>% 
@@ -851,9 +345,11 @@ final_result <- rbind(final_result, simulation_data)
 
 }
 
+
 final_result$applied_N %>% unique()
 final_result$plot_id %>% unique()
-# saveRDS(final_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_ofpe_B105.rds")
+saveRDS(final_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_ofpe_B105.rds")
+
 
 
 see_result <- final_result %>% 
@@ -866,74 +362,14 @@ ggplot(see_result)+
 ```
 
 
-```{r}
-## --- 2019 --- ##
-simulation_true_yrp_2019 <-   readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/corn_soy_rotation/corn_soy_rotation.rds") %>%
-  rbind(readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/corn_soy_rotation/corn_soy_rotation_2.rds")) %>%
-  rbind(readRDS("/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/corn_soy_rotation/corn_soy_rotation_4.rds")) %>%
-  rbind(final_result) %>% 
-  data.table() %>% 
-  .[year == 2019, ]
-
-simulation_true_yrp_2019$applied_N <- as.character(simulation_true_yrp_2019$applied_N)
-simulation_true_yrp_2019$plot_id <- as.character(simulation_true_yrp_2019$plot_id)
-
-true_yrp_2019 <- simulation_true_yrp_2019 %>% 
-  group_by(plot_id, applied_N) %>% 
-  summarise(yield_max = max(CropYieldMaize)) %>% 
-  data.table()
-
-
-
-## --- 2019 --- ##
-
-ofpe_2019 <- data.frame(
-  applied_N = applied_N[[3]], 
-  plot_id = applied_N[[5]]
-)
-
-
-ofpe_2019$plot_id <- as.character(ofpe_2019$plot_id)
-ofpe_2019$applied_N <- as.character(ofpe_2019$applied_N)
-
-ofpe_2019 <- left_join(ofpe_2019, true_yrp_2019, by = c("applied_N", "plot_id"))
-
-
-simulation_true_yrp_2019$applied_N <- as.numeric(simulation_true_yrp_2019$applied_N)
-ofpe_2019$applied_N <- as.numeric(ofpe_2019$applied_N)
-
-
-ggplot()+
-  geom_point(aes(x = as.numeric(applied_N), y = yield_max), data = true_yrp_2019, size = 0.3)+
-  geom_line(aes(x = as.numeric(applied_N), y = yield_max, group = as.factor(plot_id)), data = true_yrp_2019, size = 0.3)+
-  geom_point(aes(x = as.numeric(applied_N), y = yield_max), data = ofpe_2019, color = "blue")+
-  geom_smooth(aes(x = as.numeric(applied_N), y = yield_max), data = ofpe_2019, size = 1.2)+
-  ggtitle("true corn yield responses in each plot after 4 years corn-soy rotations")+
-  ylab("yield")+
-  theme_bw()+
-  ylim(650, 850)
-
-
-true_yrp_2019[applied_N == 0, ] %>% 
-  .[, .(yield_max)] %>% 
-  summary()
-
-
-```
-
-
 ## Consistent trial design
 
 ```{r}
 
 simulation_result <- data.frame()
 
-N_rates <- list(seq(0, 270, by = 30))
-N_rates_by5 <- list(seq(0, 240, by = 5))
-
 for (j in 1:length(N_rates[[1]])) {
 
-  j = 9
 N = as.character(N_rates[[1]][j])
 
 new.date <- "2015-05-05"
@@ -948,7 +384,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(3, 'Date'),
+            parm = list(8, 'Date'),
             value = new.date,
             overwrite = TRUE)
 
@@ -957,7 +393,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(3, 'Action'),
+            parm = list(8, 'Action'),
             value = new.action,
             overwrite = TRUE)
 
@@ -966,23 +402,23 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(3, 'Line'),
+            parm = list(8, 'Line'),
             value = new.action,
             overwrite = TRUE)
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(3, 'Date'))
+               parm = list(8, 'Date'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(3, 'Action'))
+               parm = list(8, 'Action'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(3, 'Line'))
+               parm = list(8, 'Line'))
 
-  # for (i in 1:nrow(N_rates)) {
+
 ##--------------- change the 2nd year's fertilizer amount -------------##
 new.date <- "2017-05-05"
 new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
@@ -992,7 +428,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(18, 'Date'),
+            parm = list(19, 'Date'),
             value = new.date,
             overwrite = TRUE)
 
@@ -1001,7 +437,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(18, 'Action'),
+            parm = list(19, 'Action'),
             value = new.action,
             overwrite = TRUE)
 
@@ -1010,36 +446,126 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(18, 'Line'),
+            parm = list(19, 'Line'),
             value = new.action,
             overwrite = TRUE)
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(18, 'Date'))
+               parm = list(19, 'Date'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(18, 'Action'))
+               parm = list(19, 'Action'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(18, 'Line'))
+               parm = list(19, 'Line'))
+
+    
+#--------------- change the 3rd year's fertilizer amount -------------##
+new.date <- "2019-05-05"
+new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("2019-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(30, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(30, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(30, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(30, 'Date'))
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(30, 'Action'))
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(30, 'Line'))
+
+
+#--------------- change the 4th year's fertilizer amount -------------##
+new.date <- "2021-05-05"
+new.action <- paste0("[Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("2021-05-05 [Fertiliser].Apply(Amount: ",N,", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(41, 'Date'),
+            value = new.date,
+            overwrite = TRUE)
+
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(41, 'Action'),
+            value = new.action,
+            overwrite = TRUE)
+
+
+edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+            src.dir = write_dir,
+            wrt.dir = write_dir,
+            node = "Operations",
+            parm = list(41, 'Line'),
+            value = new.action,
+            overwrite = TRUE)
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(41, 'Date'))
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(41, 'Action'))
+
+inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
+               node = "Operations",
+               parm = list(41, 'Line'))
+
+
 
   # inner loop is to get the true yield response function for each plot, i is the N rate applied for that plot.
 
   for (i in 1:length(N_rates_by5[[1]])) {
     
-#--------------- change the 3rd year's fertilizer amount -------------##
-new.date <- "2019-05-05"
+#--------------- change the 5th year's fertilizer amount -------------##
+new.date <- "2023-05-05"
 new.action <- paste0("[Fertiliser].Apply(Amount: ",N_rates_by5[[1]][i],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
-new_line <- paste0("2019-05-05 [Fertiliser].Apply(Amount: ",N_rates_by5[[1]][i],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
+new_line <- paste0("2023-05-05 [Fertiliser].Apply(Amount: ",N_rates_by5[[1]][i],", Type: Fertiliser.Types.UAN_N, Depth: 30)")
 
 edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(33, 'Date'),
+            parm = list(52, 'Date'),
             value = new.date,
             overwrite = TRUE)
 
@@ -1048,7 +574,7 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(33, 'Action'),
+            parm = list(52, 'Action'),
             value = new.action,
             overwrite = TRUE)
 
@@ -1057,22 +583,23 @@ edit_apsimx("ofpe_newC_soy_corn-edited.apsimx",
             src.dir = write_dir,
             wrt.dir = write_dir,
             node = "Operations",
-            parm = list(33, 'Line'),
+            parm = list(52, 'Line'),
             value = new.action,
             overwrite = TRUE)
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(33, 'Date'))
+               parm = list(52, 'Date'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(33, 'Action'))
+               parm = list(52, 'Action'))
 
 inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx",
                node = "Operations",
-               parm = list(33, 'Line'))
+               parm = list(52, 'Line'))
 
+    
 
 #######============== Run simulations =============#######
 print(j)
@@ -1087,7 +614,6 @@ simulation <- apsimx("ofpe_newC_soy_corn-edited.apsimx", src.dir = write_dir, va
   simulation_data <- simulation %>%  
   .[, applied_N_i := N_rates[[1]][i]] %>%
   setnames(c("Soil.Nutrient.MineralN(1)", "Soil.Nutrient.MineralN(2)", "Soil.Nutrient.MineralN(3)", "Soil.Nutrient.MineralN(4)", "Soil.Nutrient.MineralN(5)", "Soil.Nutrient.MineralN(6)", "Soil.Nutrient.MineralN(7)", "Soil.Nutrient.MineralN(8)"), c("Mineral_1", "Mineral_2", "Mineral_3","Mineral_4","Mineral_5","Mineral_6","Mineral_7", "Mineral_8"), skip_absent = TRUE) %>% 
-  .[, .(Date, NO3, NO3Leaching, AnnualNleaching, AnnualSoilMineral, AnnualNfertilizer, TotalMineralization, SoilMineralization, CropYieldMaize, CropYieldSoy, Mineral_1, Mineral_2, Mineral_3, Mineral_4, Mineral_5, Mineral_6, Mineral_7, Mineral_8)] %>% 
   .[, year := as.numeric(format(simulation$Date, "%Y"))] %>%
   .[, month := as.numeric(format(simulation$Date, "%m"))] %>% 
   .[, day := as.numeric(format(simulation$Date, "%d"))] %>% 
@@ -1101,11 +627,19 @@ simulation_result <- rbind(simulation_result, simulation_data)
 
 }
 
+
+see_result <- simulation_result %>% 
+  group_by(applied_N, plot_id) %>% 
+  summarise(yield_max = max(CropYieldMaize))
+
+ggplot(see_result)+
+  geom_point(aes(x = applied_N, y = yield_max))
+
+
+
 simulation_result$applied_N %>% unique()
 simulation_result$plot_id %>% unique()
-saveRDS(simulation_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_consistent_B105.rds")
-
-
+# saveRDS(simulation_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_consistent_B105.rds")
 
 ```
 
