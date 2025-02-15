@@ -23,7 +23,7 @@
         {
           "$type": "Models.Climate.Weather, Models",
           "ConstantsFile": null,
-          "FileName": "fake_weather.met",
+          "FileName": "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/fake_weather_1.met",
           "ExcelWorkSheetName": "",
           "Name": "Weather",
           "ResourceName": null,
@@ -33,8 +33,8 @@
         },
         {
           "$type": "Models.Clock, Models",
-          "Start": "2015-01-01T00:00:00",
-          "End": "2019-12-31T00:00:00",
+          "Start": "2014-01-01T00:00:00",
+          "End": "2023-12-31T00:00:00",
           "Name": "Clock",
           "ResourceName": null,
           "Children": [],
@@ -128,6 +128,7 @@
                 "sum([Soil].Nutrient.MineralisedN + [SurfaceOrganicMatter].SurfaceResidue.Decomposition.MineralisedN) as TotalMineralization",
                 "sum([Soil].Nutrient.MineralisedN) as SoilMineralization ",
                 "sum([SurfaceOrganicMatter].SurfaceResidue.Decomposition.MineralisedN) as SurfaceMineralization",
+                "sum([SurfaceOrganicMatter].Wt) as SurfaceOrganicMatter",
                 "diff of sum([Soil].NO3.kgha + [Soil].NH4.kgha + [Soil].Urea.kgha) from [Clock].StartOfSimulation to [Clock].EndOfDay as DeltaSoilMineralN",
                 "diff of [SurfaceOrganicMatter].N from [Clock].StartOfSimulation to [Clock].EndOfDay as DeltaSurfaceOMN",
                 "diff of sum([Soil].Nutrient.Humic.N + [Soil].Nutrient.Microbial.N + [Soil].Nutrient.FOM.N) from [Clock].StartOfSimulation to [Clock].EndOfDay as DeltaSoilOMN",
@@ -738,9 +739,51 @@
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2015-03-02",
+                  "Date": "2014-04-21",
                   "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:150)",
-                  "Line": "2015-03-02 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:150)"
+                  "Line": "2014-04-21 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:150)"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2014-04-22",
+                  "Action": "[Maize].Sow(population:8, cultivar:\"B_105\", depth:30, rowSpacing:750);",
+                  "Line": "2014-04-22 [Maize].Sow(population:8, cultivar:\"B_105\", depth:30, rowSpacing:750);"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2014-05-05",
+                  "Action": "[Fertiliser].Apply(Amount: 100, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 100, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2014-10-16",
+                  "Action": "[Maize].Harvest()",
+                  "Line": "2014-10-16 [Maize].Harvest()"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2014-10-17",
+                  "Action": "[Maize].EndCrop()",
+                  "Line": "2014-10-17 [Maize].EndCrop()"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2014-10-26",
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2014-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2015-04-21",
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:150)",
+                  "Line": "2015-04-21 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:150)"
                 },
                 {
                   "$type": "Models.Operation, Models",
@@ -753,43 +796,29 @@
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2015-05-05",
-                  "Action": "[Fertiliser].Apply(Amount: 270, Type: Fertiliser.Types.UAN_N, Depth: 30)",
-                  "Line": "[Fertiliser].Apply(Amount: 270, Type: Fertiliser.Types.UAN_N, Depth: 30)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2015-09-08",
-                  "Action": "[Maize].Harvest()",
-                  "Line": "2015-09-08 [Maize].Harvest()"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2015-09-09",
-                  "Action": "[Maize].EndCrop()",
-                  "Line": "2015-09-09 [Maize].EndCrop()"
+                  "Action": "[Fertiliser].Apply(Amount: 200, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 200, Type: Fertiliser.Types.UAN_N, Depth: 30)"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2015-10-16",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)",
-                  "Line": "2015-10-16 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)"
+                  "Action": "[Maize].Harvest()",
+                  "Line": "2015-10-16 [Maize].Harvest()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2015-10-17",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2015-10-17 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
+                  "Action": "[Maize].EndCrop()",
+                  "Line": "2015-10-17 [Maize].EndCrop()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2015-10-18",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2015-10-18 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
+                  "Date": "2015-10-26",
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2015-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
                 },
                 {
                   "$type": "Models.Operation, Models",
@@ -809,43 +838,29 @@
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2016-05-05",
-                  "Action": "[Fertiliser].Apply(Amount: 270, Type: Fertiliser.Types.UAN_N, Depth: 30)",
-                  "Line": "[Fertiliser].Apply(Amount: 270, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                  "Action": "[Fertiliser].Apply(Amount: 50, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 50, Type: Fertiliser.Types.UAN_N, Depth: 30)"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2016-10-04",
+                  "Date": "2016-10-16",
                   "Action": "[Maize].Harvest()",
-                  "Line": "2016-10-04 [Maize].Harvest()"
+                  "Line": "2016-10-16 [Maize].Harvest()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2016-10-05",
+                  "Date": "2016-10-17",
                   "Action": "[Maize].EndCrop()",
-                  "Line": "2016-10-05 [Maize].EndCrop()"
+                  "Line": "2016-10-17 [Maize].EndCrop()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2016-10-26",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)",
-                  "Line": "2016-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2016-10-27",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2016-10-27 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2016-10-28",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2016-10-28 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2016-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
                 },
                 {
                   "$type": "Models.Operation, Models",
@@ -865,43 +880,29 @@
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2017-05-05",
-                  "Action": "[Fertiliser].Apply(Amount: 270, Type: Fertiliser.Types.UAN_N, Depth: 30)",
-                  "Line": "[Fertiliser].Apply(Amount: 270, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                  "Action": "[Fertiliser].Apply(Amount: 150, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 150, Type: Fertiliser.Types.UAN_N, Depth: 30)"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2017-10-04",
+                  "Date": "2017-10-16",
                   "Action": "[Maize].Harvest()",
-                  "Line": "2017-10-04 [Maize].Harvest()"
+                  "Line": "2017-10-16 [Maize].Harvest()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2017-10-05",
+                  "Date": "2017-10-17",
                   "Action": "[Maize].EndCrop()",
-                  "Line": "2017-10-05 [Maize].EndCrop()"
+                  "Line": "2017-10-17 [Maize].EndCrop()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2017-10-26",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)",
-                  "Line": "2017-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2017-10-27",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2017-10-27 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2017-10-28",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2017-10-28 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2017-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
                 },
                 {
                   "$type": "Models.Operation, Models",
@@ -921,43 +922,29 @@
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2018-05-05",
-                  "Action": "[Fertiliser].Apply(Amount: 270, Type: Fertiliser.Types.UAN_N, Depth: 30)",
-                  "Line": "[Fertiliser].Apply(Amount: 270, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                  "Action": "[Fertiliser].Apply(Amount: 250, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 250, Type: Fertiliser.Types.UAN_N, Depth: 30)"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2018-10-04",
+                  "Date": "2018-10-16",
                   "Action": "[Maize].Harvest()",
-                  "Line": "2018-10-04 [Maize].Harvest()"
+                  "Line": "2018-10-16 [Maize].Harvest()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2018-10-05",
+                  "Date": "2018-10-17",
                   "Action": "[Maize].EndCrop()",
-                  "Line": "2018-10-05 [Maize].EndCrop()"
+                  "Line": "2018-10-17 [Maize].EndCrop()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2018-10-26",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)",
-                  "Line": "2018-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2018-10-27",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2018-10-27 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2018-10-28",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2018-10-28 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2018-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
                 },
                 {
                   "$type": "Models.Operation, Models",
@@ -977,43 +964,29 @@
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2019-05-05",
-                  "Action": "[Fertiliser].Apply(Amount: 240, Type: Fertiliser.Types.UAN_N, Depth: 30)",
-                  "Line": "[Fertiliser].Apply(Amount: 240, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                  "Action": "[Fertiliser].Apply(Amount: 50, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 50, Type: Fertiliser.Types.UAN_N, Depth: 30)"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2019-10-04",
+                  "Date": "2019-10-16",
                   "Action": "[Maize].Harvest()",
-                  "Line": "2019-10-04 [Maize].Harvest()"
+                  "Line": "2019-10-16 [Maize].Harvest()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2019-10-05",
+                  "Date": "2019-10-17",
                   "Action": "[Maize].EndCrop()",
-                  "Line": "2019-10-05 [Maize].EndCrop()"
+                  "Line": "2019-10-17 [Maize].EndCrop()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2019-10-26",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)",
-                  "Line": "2019-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2019-10-27",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2019-10-27 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2019-10-28",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2019-10-28 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2019-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
                 },
                 {
                   "$type": "Models.Operation, Models",
@@ -1034,42 +1007,28 @@
                   "Enabled": true,
                   "Date": "2020-05-05",
                   "Action": "[Fertiliser].Apply(Amount: 300, Type: Fertiliser.Types.UAN_N, Depth: 30)",
-                  "Line": "2020-05-05 [Fertiliser].Apply(Amount: 300, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                  "Line": "[Fertiliser].Apply(Amount: 300, Type: Fertiliser.Types.UAN_N, Depth: 30)"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2020-10-04",
+                  "Date": "2020-10-16",
                   "Action": "[Maize].Harvest()",
-                  "Line": "2020-10-04 [Maize].Harvest()"
+                  "Line": "2020-10-16 [Maize].Harvest()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2020-10-05",
+                  "Date": "2020-10-17",
                   "Action": "[Maize].EndCrop()",
-                  "Line": "2020-10-05 [Maize].EndCrop()"
+                  "Line": "2020-10-17 [Maize].EndCrop()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2020-10-26",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)",
-                  "Line": "2020-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2020-10-27",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2020-10-27 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2020-10-28",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2020-10-28 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2020-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
                 },
                 {
                   "$type": "Models.Operation, Models",
@@ -1089,43 +1048,29 @@
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2021-05-05",
-                  "Action": "[Fertiliser].Apply(Amount: 300, Type: Fertiliser.Types.UAN_N, Depth: 30)",
-                  "Line": "2021-05-05 [Fertiliser].Apply(Amount: 300, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                  "Action": "[Fertiliser].Apply(Amount: 250, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 250, Type: Fertiliser.Types.UAN_N, Depth: 30)"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2021-10-04",
+                  "Date": "2021-10-16",
                   "Action": "[Maize].Harvest()",
-                  "Line": "2021-10-04 [Maize].Harvest()"
+                  "Line": "2021-10-16 [Maize].Harvest()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2021-10-05",
+                  "Date": "2021-10-17",
                   "Action": "[Maize].EndCrop()",
-                  "Line": "2021-10-05 [Maize].EndCrop()"
+                  "Line": "2021-10-17 [Maize].EndCrop()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2021-10-26",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)",
-                  "Line": "2021-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:550)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2021-10-27",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2021-10-27 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
-                },
-                {
-                  "$type": "Models.Operation, Models",
-                  "Enabled": true,
-                  "Date": "2021-10-28",
-                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)",
-                  "Line": "2021-10-28 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:200)"
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2021-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
                 },
                 {
                   "$type": "Models.Operation, Models",
@@ -1145,22 +1090,71 @@
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
                   "Date": "2022-05-05",
-                  "Action": "[Fertiliser].Apply(Amount: 300, Type: Fertiliser.Types.UAN_N, Depth: 30)",
-                  "Line": "2022-05-05 [Fertiliser].Apply(Amount: 300, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                  "Action": "[Fertiliser].Apply(Amount: 50, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 50, Type: Fertiliser.Types.UAN_N, Depth: 30)"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2022-10-04",
+                  "Date": "2022-10-16",
                   "Action": "[Maize].Harvest()",
-                  "Line": "2022-10-04 [Maize].Harvest()"
+                  "Line": "2022-10-16 [Maize].Harvest()"
                 },
                 {
                   "$type": "Models.Operation, Models",
                   "Enabled": true,
-                  "Date": "2022-10-05",
+                  "Date": "2022-10-17",
                   "Action": "[Maize].EndCrop()",
-                  "Line": "2022-10-05 [Maize].EndCrop()"
+                  "Line": "2022-10-17 [Maize].EndCrop()"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2022-10-26",
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2022-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2023-04-21",
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:150)",
+                  "Line": "2023-04-21 [SurfaceOrganicMatter].Incorporate(fraction:0.5,depth:150)"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2023-04-22",
+                  "Action": "[Maize].Sow(population:8, cultivar:\"B_105\", depth:30, rowSpacing:750);",
+                  "Line": "2023-04-22 [Maize].Sow(population:8, cultivar:\"B_105\", depth:30, rowSpacing:750);"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2023-05-05",
+                  "Action": "[Fertiliser].Apply(Amount: 240, Type: Fertiliser.Types.UAN_N, Depth: 30)",
+                  "Line": "[Fertiliser].Apply(Amount: 240, Type: Fertiliser.Types.UAN_N, Depth: 30)"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2023-10-16",
+                  "Action": "[Maize].Harvest()",
+                  "Line": "2023-10-16 [Maize].Harvest()"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2023-10-17",
+                  "Action": "[Maize].EndCrop()",
+                  "Line": "2023-10-17 [Maize].EndCrop()"
+                },
+                {
+                  "$type": "Models.Operation, Models",
+                  "Enabled": true,
+                  "Date": "2023-10-26",
+                  "Action": "[SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)",
+                  "Line": "2023-10-26 [SurfaceOrganicMatter].Incorporate(fraction:0.6,depth:200)"
                 }
               ],
               "Name": "Operations",
