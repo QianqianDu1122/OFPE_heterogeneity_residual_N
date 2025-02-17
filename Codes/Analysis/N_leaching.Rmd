@@ -1,0 +1,102 @@
+---
+title: "N leaching"
+author: "Qianqian Du"
+date: "2025-02-15"
+output: html_document
+---
+
+# corn-corn consistent setting
+```{r}
+
+cc_consisten_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_consistent_B105.rds"))
+
+ggplot(data = cc_consisten_b105[year == 2016, ])+
+  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
+  scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )
+
+
+ggplot(data = cc_consisten_b105)+
+  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
+  facet_grid(.~ year)+
+    scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )
+
+
+```
+
+
+# corn-corn ofpe setting
+```{r}
+
+cc_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_ofpe_B105_1_50.rds"))
+
+ggplot(data = cc_ofpe_b105[year == 2023, ])+
+  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))
+
+
+ggplot(data = cc_ofpe_b105)+
+  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
+  facet_grid(.~ year)
+
+```
+
+# corn-soy consistent setting
+```{r}
+
+cs_consistent_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_consistent_B105.rds"))
+
+ggplot(data = cs_consistent_b105[year == 2019, ])+
+  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
+    scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )
+
+
+ggplot(data = cs_consistent_b105)+
+  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
+  facet_grid(.~ year)+
+    geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
+    scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )
+
+```
+
+
+# corn-soy ofpe setting
+```{r}
+
+cs_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_ofpe_B105.rds"))
+
+ggplot(data = cs_ofpe_b105[year == 2023, ])+
+  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))
+
+
+ggplot(data = cs_ofpe_b105)+
+  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
+  facet_grid(.~ year)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
