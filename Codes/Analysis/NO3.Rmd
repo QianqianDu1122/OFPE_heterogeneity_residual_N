@@ -1,0 +1,59 @@
+---
+title: "NO3"
+author: "Qianqian Du"
+date: "2025-02-17"
+output: html_document
+---
+
+# corn-corn consistent setting
+```{r}
+
+cc_consisten_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_consistent_B105.rds"))
+
+ggplot(data = cc_consisten_b105[year == 2015, ])+
+  geom_point(aes(x = Date, y = NO3, color = plot_id))
+
+
+ggplot(data = cc_consisten_b105)+
+  geom_point(aes(x = Date, y = NO3, color = plot_id))
+
+```
+
+
+# corn-corn ofpe setting
+```{r}
+
+cc_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_ofpe_B105_1_50.rds"))
+
+ggplot(data = cc_ofpe_b105)+
+  geom_point(aes(x = Date, y = NO3, color = plot_id))
+
+
+```
+
+
+# corn-soy consistent setting
+```{r}
+
+cs_consistent_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_consistent_B105.rds"))
+
+ggplot(data = cs_consistent_b105)+
+  geom_point(aes(x = Date, y = NO3, color = plot_id))
+
+```
+
+
+
+# corn-soy ofpe setting
+```{r}
+
+cs_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_ofpe_B105.rds"))
+
+ggplot(data = cs_ofpe_b105)+
+  geom_point(aes(x = Date, y = NO3, color = plot_id))
+
+
+```
+
+
+
