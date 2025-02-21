@@ -17,39 +17,46 @@ library(here)
 
 ```{r cache=TRUE}
 ###---- upload the simulation result ----###
-cc_consisten_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_corn_consistent_B105.rds"))
+cc_consisten_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_consistent_B105.rds"))
 
 
 ###---- find the simulated true yield response curves ----###
 
 cc_consisten_b105_yield <- cc_consisten_b105 %>% 
-  mutate(CropYield = CropYield*10*0.0159/0.85) %>% 
-  mutate(applied_N = applied_N*0.8921) %>% 
+  mutate(CropYield = CropYield*10*0.0159/0.85) %>% # change from g/m^2 to bu/ac
+  mutate(applied_N = applied_N*0.8921) %>% # change from kg/ha to lb/ac
   data.table() %>% 
-  .[year == 2019, ] %>% 
+  .[year == 2023, ] %>% 
   .[, .(yield_max = max(CropYield)), by = .(applied_N, plot_id)] 
 
 
 ###---- create N seq for trial designs ----###
 N_rates <- data.frame(
-    var_N = seq(0, 270, by = 5)
-  ) %>% 
+    var_N = c(0, 50, 100, 150, 200, 250, 300)
+  )%>% 
   mutate(var_N = as.character(var_N*0.8921))
 
 number_plot <- 100
 
 set.seed(230829)
+
 ###--- trial design ---###
 applied_N <- data.frame(
   year_1 = sample(N_rates$var_N, number_plot, replace = TRUE),
   year_2 = sample(N_rates$var_N, number_plot, replace = TRUE),
   year_3 = sample(N_rates$var_N, number_plot, replace = TRUE),
   year_4 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_5 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_6 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_7 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_8 = sample(N_rates$var_N, number_plot, replace = TRUE),
+  year_9 = sample(N_rates$var_N, number_plot, replace = TRUE),
   plot_id = seq(1, 100, by = 1)) %>% 
   as.list()
 
+
 cc_consistant_td <- data.frame(
-  applied_N = as.numeric(applied_N$year_4[1:100]),
+  applied_N = as.numeric(applied_N$year_9[1:100]),
   plot_id = as.character(seq(1,100, by = 1))
 ) %>% 
   left_join(., cc_consisten_b105_yield, by = c("applied_N", "plot_id"))
@@ -59,8 +66,15 @@ cc_consistant_td <- data.frame(
 ggplot()+
   geom_point(aes(x = applied_N, y = yield_max, color = plot_id), data = cc_consisten_b105_yield, size = 0.5)+
   geom_line(aes(x = applied_N, y = yield_max, color = plot_id), data = cc_consisten_b105_yield, size = 0.5)+
-  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), data = cc_consistant_td, color = "blue")+
-  geom_smooth(aes(x = applied_N, y = yield_max), data = cc_consistant_td, color = "blue")+
+  # geom_point(aes(x = applied_N, y = yield_max, color = plot_id), data = cc_consistant_td, color = "blue")+
+  # geom_smooth(aes(x = applied_N, y = yield_max), data = cc_consistant_td, color = "blue")+
+  scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("red", "orange", "green", "blue", "cyan", "purple", "pink"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )+
+  ylab("Yield (bu/ac)")+
+  xlab("Applied N")+
   theme_bw()
 
 ```
@@ -83,12 +97,34 @@ cc_consist_yield_analysis <- cc_consisten_b105_yield %>%
 
 
 ggplot()+
-  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consisten_b105_yield, size = 0.5)+
-  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consisten_b105_yield, size = 0.5)+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), data = cc_consisten_b105_yield, size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), data = cc_consisten_b105_yield, size = 0.5)+
   geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consistant_td, color = "blue")+
   geom_smooth(aes(x = applied_N, y = yield_max), data = cc_consistant_td, color = "blue")+
   geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_consist_yield_analysis, color = "red")+
+  xlab("N rate")+
+  ylab("Yield")+
+  ggtitle("yield response to N with corn-corn consistent trial design")+
   theme_bw()
+
+###--- make the figure to show that the levels change is the same as we expected ---###
+# Convert plot_id to a factor and ensure levels are ordered numerically
+cc_consisten_b105_yield$plot_id <- factor(cc_consisten_b105_yield$plot_id, 
+                                          levels = as.character(1:10)) 
+
+ggplot() +
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), 
+             data = cc_consisten_b105_yield, size = 0.5) +
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), 
+            data = cc_consisten_b105_yield, size = 0.5) +
+  labs(color = "N level") +
+  xlab("N rate") +
+  ylab("Yield") +
+  ggtitle("Yield response to N with corn-corn consistent trial design") +
+  theme_bw()
+
+
+
 
 # site-specific EONRs statistic #
 summary(cc_consist_yield_analysis$applied_N)
@@ -153,7 +189,7 @@ cc_consistant_estimate
 # Eonomic analysis for corn-corn ofpe setting
 ```{r cache=TRUE}
 ###---- upload the simulation result ----###
-cc_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_corn_ofpe_B105.rds"))
+cc_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_ofpe_B105_1_50.rds"))
 
 ###---- find the simulated true yield response curves ----###
 
@@ -162,12 +198,12 @@ cc_ofpe_b105_yield <- cc_ofpe_b105 %>%
   mutate(applied_N = applied_N*0.8921) %>% 
   mutate(applied_N = round(applied_N, digits = 2)) %>% 
   data.table() %>% 
-  .[year == 2019, ] %>% 
+  .[year == 2023, ] %>% 
   .[, .(yield_max = max(CropYield)), by = .(applied_N, plot_id)]
 
 
 cc_ofpe_td <- data.frame(
-  applied_N = round(as.numeric(applied_N$year_4[1:100]), digit = 2),
+  applied_N = round(as.numeric(applied_N$year_9[1:100])*0.8921, digit = 2),
   plot_id = as.character(seq(1,100, by = 1))
 ) %>% 
   left_join(., cc_ofpe_b105_yield, by = c("applied_N", "plot_id"))
@@ -177,8 +213,11 @@ cc_ofpe_td <- data.frame(
 ggplot()+
   geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_b105_yield, size = 0.5)+
   geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_b105_yield, size = 0.5)+
-  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_td, color = "blue")+
-  geom_smooth(aes(x = applied_N, y = yield_max), data = cc_ofpe_td, color = "blue")+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cc_ofpe_td, color = "red")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cc_ofpe_td, color = "red")+
+  xlab("N rate")+
+  ylab("Yield")+
+  ggtitle("yield response to N with corn-corn randomized trial design")+
   theme_bw()
 
 ```
@@ -277,7 +316,7 @@ cs_consist_yield <- cs_consistent_b105 %>%
   mutate(applied_N = applied_N*0.8921) %>% 
   mutate(applied_N = round(applied_N, digits = 2)) %>% 
   data.table() %>% 
-  .[year == 2019, .(yield_max = max(CropYieldMaize)), by = .(applied_N, plot_id)]
+  .[year == 2023, .(yield_max = max(CropYieldMaize)), by = .(applied_N, plot_id)]
 
 
 ###---- create N seq for trial designs ----###
@@ -295,8 +334,27 @@ cs_consistant_td <- data.frame(
 ggplot()+
   geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consist_yield, size = 0.5)+
   geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consist_yield, size = 0.5)+
-  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consistant_td, color = "blue")+
-  geom_smooth(aes(x = applied_N, y = yield_max), data = cs_consistant_td, color = "blue")+
+  # geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_consistant_td, color = "red")+
+  # geom_smooth(aes(x = applied_N, y = yield_max), data = cs_consistant_td, color = "red")+
+  theme_bw()
+
+
+###--- make the figure to show that the levels change is the same as we expected ---###
+# Convert plot_id to a factor and ensure levels are ordered numerically
+
+ggplot() +
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), 
+             data = cs_consist_yield, size = 0.5) +
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), 
+            data = cs_consist_yield, size = 0.5) +
+    scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("red", "orange", "green", "blue", "cyan", "purple", "pink"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )+
+  ylab("Yield (bu/ac)")+
+  xlab("Applied N")+
+  ggtitle("Yield response to N with corn-soy consistent trial design") +
   theme_bw()
 
 ```
@@ -395,14 +453,14 @@ cs_ofpe_yield <- cs_ofpe %>%
   mutate(applied_N = applied_N*0.8921) %>% 
   mutate(applied_N = round(applied_N, digits = 2)) %>% 
   data.table() %>% 
-  .[year == 2019, .(yield_max = max(CropYieldMaize)), by = .(applied_N, plot_id)]
+  .[year == 2023, .(yield_max = max(CropYieldMaize)), by = .(applied_N, plot_id)]
 
 
 ###---- create N seq for trial designs ----###
 
 cs_ofpe_td <- data.frame(
-  applied_N = round(as.numeric(applied_N$year_4[1:40]), digits = 2),
-  plot_id = as.character(seq(1,40, by = 1))
+  applied_N = round(as.numeric(applied_N$year_9[1:100])*0.8921, digit = 2),
+  plot_id = as.character(seq(1,100, by = 1))
 ) %>% 
   left_join(., cs_ofpe_yield, by = c("applied_N", "plot_id"))
 
@@ -411,8 +469,11 @@ cs_ofpe_td <- data.frame(
 ggplot()+
   geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_yield, size = 0.5)+
   geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_yield, size = 0.5)+
-  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_td, color = "blue")+
-  geom_smooth(aes(x = applied_N, y = yield_max), data = cs_ofpe_td, color = "blue")+
+  geom_point(aes(x = applied_N, y = yield_max, group = plot_id), data = cs_ofpe_td, color = "red")+
+  geom_smooth(aes(x = applied_N, y = yield_max), data = cs_ofpe_td, color = "red")+
+  xlab("N rate") +
+  ylab("Yield") +
+  ggtitle("yield response to N with corn-soy randomized trial design") +
   theme_bw()
 
 ```

@@ -629,6 +629,7 @@ simulation_result <- rbind(simulation_result, simulation_data)
 
 
 see_result <- simulation_result %>% 
+  filter(year == 2023) %>% 
   group_by(applied_N, plot_id) %>% 
   summarise(yield_max = max(CropYieldMaize))
 
@@ -639,7 +640,7 @@ ggplot(see_result)+
 
 simulation_result$applied_N %>% unique()
 simulation_result$plot_id %>% unique()
-# saveRDS(simulation_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_consistent_B105.rds")
+saveRDS(simulation_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_consistent_B105.rds")
 
 ```
 
@@ -655,9 +656,6 @@ ggplot(data = consis_rate)+
   geom_point(aes(x = applied_N, y = yield_max, color = plot_id))+
   geom_line(aes(x = applied_N, y = yield_max, color = plot_id))+
   theme_bw()
-  # xlab("applied N")+
-  # ylab("Corn yield")+
-  # ylim(650, 850)
 
 consis_rate[applied_N == 0, .(yield_max)] %>% 
   summary()

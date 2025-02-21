@@ -10,6 +10,23 @@ output: html_document
 
 cc_consisten_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_consistent_B105.rds"))
 
+
+### Annual values ###
+annual_cc_coon_leaching <- cc_consisten_b105 %>% 
+  .[, .(annu_leach = max(AnnualNleaching)), .(year, plot_id)]
+
+ggplot(data = annual_cc_coon_leaching)+
+  geom_point(aes(x = year, y = annu_leach, color = plot_id))+
+  geom_line(aes(x = year, y = annu_leach, color = plot_id))+
+      scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )
+
+
+### Daily values ###
+
 ggplot(data = cc_consisten_b105[year == 2016, ])+
   geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
   scale_color_manual(
@@ -37,6 +54,18 @@ ggplot(data = cc_consisten_b105)+
 
 cc_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_ofpe_B105_1_50.rds"))
 
+
+### Annual values ###
+annual_cc_ofpe_leaching <- cc_ofpe_b105 %>% 
+  .[, .(annu_leach = max(AnnualNleaching)), .(year, plot_id)]
+
+ggplot(data = annual_cc_ofpe_leaching)+
+  geom_point(aes(x = year, y = annu_leach, color = plot_id))+
+  geom_line(aes(x = year, y = annu_leach, color = plot_id))
+
+
+### Daily values ###
+
 ggplot(data = cc_ofpe_b105[year == 2023, ])+
   geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))
 
@@ -51,6 +80,22 @@ ggplot(data = cc_ofpe_b105)+
 ```{r}
 
 cs_consistent_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_consistent_B105.rds"))
+
+### Annual values ###
+annual_cs_consis_leaching <- cs_consistent_b105 %>% 
+  .[, .(annu_leach = max(AnnualNleaching)), .(year, plot_id)]
+
+ggplot(data = annual_cs_consis_leaching)+
+  geom_point(aes(x = year, y = annu_leach, color = plot_id))+
+  geom_line(aes(x = year, y = annu_leach, color = plot_id))+
+      scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )
+
+
+### Daily values ###
 
 ggplot(data = cs_consistent_b105[year == 2019, ])+
   geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
@@ -78,6 +123,18 @@ ggplot(data = cs_consistent_b105)+
 ```{r}
 
 cs_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_ofpe_B105.rds"))
+
+
+### Annual values ###
+annual_cs_ofpe_leaching <- cs_ofpe_b105 %>% 
+  .[, .(annu_leach = max(AnnualNleaching)), .(year, plot_id)]
+
+ggplot(data = annual_cs_ofpe_leaching)+
+  geom_point(aes(x = year, y = annu_leach, color = plot_id))+
+  geom_line(aes(x = year, y = annu_leach, color = plot_id))
+
+
+### Daily values ###
 
 ggplot(data = cs_ofpe_b105[year == 2023, ])+
   geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))
