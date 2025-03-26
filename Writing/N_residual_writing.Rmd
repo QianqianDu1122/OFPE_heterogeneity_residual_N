@@ -77,15 +77,22 @@ The Agricultural Production Systems sIMulator (APSIM) is an open-source, advance
 The crop models used in this study include corn [@carberry1991tailoring] and soybean [@robertson1998simulating] crop models. The SOILN module [@probert1998apsim] in APSIM was used to model soil N and C cycling, as well as to simulate nitrogen mineralization from soil organic matter, thereby generating the nitrogen supply available to a crop from the soil. Clarion loam soil was used as the soil type in the simulated field, soil profile information can be obtained from https://websoilsurvey.sc.egov.usda.gov/App/HomePage.htm. Simulations were performed in a stylized representative field at a rainfed location in the US Midwest in Ames, IL. 
 
 
-## Crop Growing Simulations
+## Crop Growing Simulation set up
 
 The simulation process was consecutive to account for carry-over soil N effects for seven years without annual re-initialization between each growing season. The following crop management prameters were held constant across years for each crop type. Planting depth was 50 mm for both corn and soybean. Plant polulation was 8 and 30 plants $m^{-2}$ for corn and soysean, respectively. Crops were planted on April 22nd and harvest on October 16th each year. Row spacing was 760 mm for both corn and soybean. Nitrogen fertilizer was applied near planting on May 5th and was only applied to corn. Tillage was applied on October 18th each year in the fall after the crop was harvested and on April 16th in the spring before the crop was planted.
 
-Weather could influence the yield response to N and soil N level grately. To isolate weather effects and make applied N level as the only variable in the simulation. We used actual 2019 daily weather data obtained from Daymet [@daymet] and replicated it nine times, creating a 10-year simulation under same weather conditions each year. This approach ensures that any variance in yearly yield response is solely due to differences in residual nitrogen resulting from variable nitrogen applications. 
+## Simulation Scenarios 
 
 Two cropping systems were compared in this study: continuous corn (CC) rotation and corn-soybean (CS) rotation. Since the aim of this study is to examine the impact of variable rate N application on soil N residuals and its effect on yield response, only N application rates will be considered as a variable in the OFPE trials, with corn and soybean seeding rates kept consistent across fields and years.
 
-Each simulated N-OFPE trial included of six targeted N rates: 0, 50, 150, 200, 250, and 300 kg/ha. Two types of trial designs were used for the simulations: a completely randomized trial design and a consistent trial design over multiple years. The figure illustrates the trial design maps. In the consistent trial design scenario, plots that receive a higher rate of N continue to receive more N each year, leading to an expected higher residual inorganic N accumulation. Consequently, a wider range of yield response variations is expected to be observed in the OFPE following the consistent trial design map.
+Two types of trial designs were used for the simulations: a completely randomized trial design and a consistent trial design over multiple years. Each simulated N-OFPE trial included of six targeted N rates: 0, 50, 150, 200, 250, and 300 kg/ha. The figure illustrates the trial design maps. In the consistent trial design scenario, plots receiving higher N rates continue to receive the same high rates each year, leading to greater residual inorganic N accumulation over time. As a result, a wider range of yield response variations is expected in OFPEs following the consistent trial design. In contrast, in the randomized trial design scenario, N application rates are reassigned randomly each year. This reduces the likelihood of N accumulation or depletion at specific locations, decreasing long-term N imbalances across the field.
+
+Tillage strategies can significantly influence soil N dynamics by affecting soil structure, organic matter decomposition, and N mineralization. Both tillage and no-tillage scenarios were included in the simulations to assess the impact of residual inorganic N in the soil on corn yield responses.
+
+Weather could influence the yield response to N and soil N level grately. To isolate weather effects and make applied N level as the only variable in the simulation. We used actual daily weather data obtained from Daymet [@daymet] and replicated it nine times, creating a 10-year simulation under same weather conditions each year. This approach ensures that any variance in yearly yield response is solely due to differences in residual N resulting from variable N applications. To examine the impact of weather on how residual inorganic N in the soil affects corn yield responses, two different weather scenarios were created using data from a normal year (2019) and a wet year (2010). Figure @ref(fig:cs-consis-leaching) demonstrated the weather conditions. 
+
+Overall, this study considered two cropping rotation systems, two trial design types, two tillage strategies, and two weather conditions, resulting in a total of 16 scenarios.
+
 
 ## EONR Estimations
 By taking advantage of APSIM’s capability to model crop yield at any desired N rate increment, we used the APSIM model to simulate corn yield at 5 kg/ha increments from 0 to 270 kg/ha of N. This enabled us to calculate profit (crop yield multiplied by crop price minus N rate multiplied by N price) for each N rate. The EONR corresponds to the N rate that provides the highest profit, representing the true EONR at each site. In each croping system with a trial design, we compared the true site-spcific EONR and the true optimal uniform EONR using simulated yield response data gennerated by APSIM, as well as the estimated uniform EONR using observed OFPE data gennerated from APSIM. 
@@ -143,12 +150,23 @@ Figure @ref(fig:cs-consis-leaching) shows the annual N leaching results from APS
 
 # Discussion
 
+
+This study provides insights into the potential long-term effects of repeatedly conducting OFPE on the same field. Consistently applying variable N rates in the same location can lead to uneven inorganic N soil residual accumulation, which in turn influences yield response functions and EONR estimations in the following year. In addition, excessive N buildup in some areas and depletion in others could reduce N use efficiency and increase the risk of environmental impacts such as leaching and greenhouse gas emissions. Therefore, it may be advisable to avoid using the same trial design map over multiple years, especially in a continuous corn field. 
+
+Future research is needed to explore methods for determining EONR that incorporate inorganic N soil residual dynamics over multiple years. Since N carryover can significantly affect yield response, developing models that integrate historical N application data, soil N mineralization rates, and environmental factors will be important for refining N management strategies. 
+
 Soil physical characteristics can significantly influence N dynamics and impact the outcomes observed in this study. For example, soil texture affects water retention, drainage, and N leaching rates, which in turn influence the accumulation of residual inorganic N and its availability for crops- sandy soils with high permeability may result greater N leaching, reducing the carryover of residual N and potentially increasing the EONR. Clay or silt loam have higher water-holding capacity, which can slow N leaching and lead to greater residual N accumulation over time.
 
 
 + The degree of lagecy effects among cc tillage in two trial designs, cs tillage in two trial designs
 
-+ farmers may need to more carefully manage nitrogen in a continuous corn system.
+
+
+
+
+
+
+
 
 
 
