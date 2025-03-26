@@ -1,0 +1,166 @@
+---
+title: "weather impact"
+author: "Qianqian Du"
+date: "2025-03-10"
+output: html_document
+---
+
+
+# uplode the packages
+```{r, message=FALSE, warning=FALSE}
+library(apsimx)
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+library(oce)
+library(lubridate)
+library(gam)
+``` 
+
+```{r}
+write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/"
+
+for (i in c(1993, 1994, 1995, 1997, 1998, 1999, 2001, 2002, 2003, 2005, 2006, 2007, 2009, 2010, 2011, 2013, 2014, 2015, 2017, 2018, 2019, 2021)) {
+
+
+weather_file <- paste0("fake_weather_", i, ".met")
+
+weather_i <- read_apsim_met(weather_file, src.dir = write_dir) 
+
+analysis_weather_i <- weather_i %>% 
+  data.table() %>% 
+  .[, date := day - 1 + ymd(paste0(year, "-01-01"))]
+
+analysis_weather_i <- analysis_weather_i %>% 
+  .[, month := as.numeric(format(analysis_weather_i$date, "%m"))] %>% 
+  .[, fake_year := i]
+
+
+#----- get monthly precip -----#
+
+month_precip <- analysis_weather_i %>% 
+  .[year == 2014, .(ave_month = sum(rain)), by = .(year, month)]
+
+month_precip$month <- factor(month_precip$month, levels = 1:12, labels = month.abb)  # Convert to abbreviated month names
+  
+rainfall_fig <- ggplot(data = month_precip) +
+  geom_bar(aes(x = month, y = ave_month), stat = "identity", fill = "skyblue")+
+  labs(
+    title = paste0("Average monthly precip from the year of ", i),
+    x = "Month",
+    y = "Rainfall (mm)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )+
+  ylim(0, 400)
+
+
+# ggsave(rainfall_fig, filename = paste0("weather", i, ".png"))
+
+
+#----- get yield response -----#
+
+apsim_data <- readRDS(paste0("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_consistent_B105_", i, ".rds" )) %>% 
+  filter(year == 2023) %>% 
+  group_by(applied_N, plot_id) %>% 
+  summarise(yield_max = max(CropYield))
+
+
+yield_curv <- ggplot(apsim_data)+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id))+
+    scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )+
+  ggtitle(i)+
+  ylab("yield")+
+  theme_bw()
+
+# ggsave(yield_curv, filename = paste0("yield", i, ".png"))
+
+
+
+### ------ Annual leaching values ------ ###
+
+annual_cc_coon_leaching <- readRDS(paste0("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_consistent_B105_", i, ".rds" )) %>% 
+  .[, .(annu_leach = max(AnnualNleaching)), .(year, plot_id)]
+
+annual_leaching_fig <- ggplot(data = annual_cc_coon_leaching)+
+  geom_point(aes(x = year, y = annu_leach, color = plot_id))+
+  geom_line(aes(x = year, y = annu_leach, color = plot_id))+
+      scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )+
+  ggtitle(i) +
+  ylab("N leaching")+
+  theme_bw()
+
+# ggsave(annual_leaching_fig, filename = paste0("N_leaching", i, ".png"))
+
+}
+
+
+```
+
+
+
+# Get monthly precip
+```{r}
+
+write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/"
+
+all_weather <- data.frame()
+
+for (i in c(1993, 1994, 1995, 1997, 1998, 1999, 2001, 2002, 2003, 2005, 2006, 2007, 2009, 2010, 2011, 2013, 2014, 2015, 2017, 2018, 2019, 2021)) {
+
+weather_file <- paste0("fake_weather_", i, ".met")
+
+weather_i <- read_apsim_met(weather_file, src.dir = write_dir) 
+
+analysis_weather_i <- weather_i %>% 
+  data.table() %>% 
+  .[, date := day - 1 + ymd(paste0(year, "-01-01"))]
+
+analysis_weather_i <- analysis_weather_i %>% 
+  .[, month := as.numeric(format(analysis_weather_i$date, "%m"))] %>% 
+  .[, fake_year := i]
+
+
+#----- get monthly precip and combine all weather data -----#
+
+month_precip <- analysis_weather_i %>% 
+  .[year == 2014, .(ave_month = sum(rain), fake_year), by = .(year, month)]
+
+all_weather <- rbind(all_weather, month_precip)
+
+}
+
+#----- Look at the precip by years -----#
+
+analysis_all_weather <- all_weather %>% 
+  .[month %in% c(1, 2, 3), .(annu_precip = sum(ave_month)), by = .(fake_year)]
+
+analysis_all_weather_fig <- ggplot(data = analysis_all_weather) +
+  geom_bar(aes(x = as.factor(fake_year), y = annu_precip), stat = "identity", fill = "skyblue")+
+  labs(
+    x = "Fake year",
+    y = "Rainfall (mm)"
+  ) +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+
+analysis_all_weather_fig
+
+```
+
+
+
+
+

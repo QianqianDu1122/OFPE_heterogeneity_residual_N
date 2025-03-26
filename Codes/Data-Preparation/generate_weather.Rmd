@@ -18,20 +18,22 @@ write_dir = "/Users/qianqiandu/Desktop/N_Residual_APSIM/Codes/consistent_rate_tr
 
 true_weather <- read_apsim_met("Iowa_CC.met", src.dir = write_dir)
 
+
 # take a look at the weather #
 
 weather_overlook <- true_weather %>% 
   data.table() %>% 
+  .[year >= 1992] %>% 
   .[, .(year_precip = sum(rain)), by = "year"]
 
 ggplot(data = weather_overlook)+
   geom_point(aes(x = year, y = year_precip))
 
-# 2012 is a very dry year and 2010 is a very wet year. 
+# 2021 is a very dry year and 2015 is a very wet year. 
 
 ```
 
-
+# Creating the normal year as fake weather; Use 2019 as the normal year and create fake weather  
 ```{r}
 ###---- choose the year of 2019's weather and replicate it for other years ----###
 # weather_2019 <- true_weather %>% 
@@ -93,51 +95,6 @@ weather_2024 <- weather_2019 %>%
 
 weather_2024[366, 2] <- 366
 weather_2024$year <- as.integer(2024)
-
-
-
-
-
-###====== data.table will change the format of .met dataset!!! =======###
-
-# weather_2015 <- weather_2019 %>% 
-#   .[, -"year"] %>% 
-#   .[, year := as.integer("2015")] %>% 
-#   .[, .(year, day, radn, maxt, mint, rain)]
-
-# weather_2016 <- weather_2019 %>% 
-#   .[, -"year"] %>% 
-#   .[, year := as.integer("2016")] %>% 
-#   .[, .(year, day, radn, maxt, mint, rain)] %>% 
-#   rbind(weather_2019[365,])
-# 
-# tail(weather_2016)
-# 
-# weather_2016[366, 2] <- 366
-# weather_2016[366, 1] <- as.integer("2016")
-# 
-# 
-# weather_2017 <- weather_2019 %>% 
-#   .[, -"year"] %>% 
-#   .[, year := as.integer("2017")] %>% 
-#   .[, .(year, day, radn, maxt, mint, rain)]
-# 
-# weather_2018 <- weather_2019 %>% 
-#   .[, -"year"] %>% 
-#   .[, year := as.integer("2018")] %>% 
-#   .[, .(year, day, radn, maxt, mint, rain)]
-# 
-# weather_2020 <- weather_2019 %>% 
-#   .[, -"year"] %>% 
-#   .[, year := as.integer("2020")] %>% 
-#   .[, .(year, day, radn, maxt, mint, rain)] %>% 
-#   rbind(weather_2019[365,])
-# 
-# weather_2020[366, 2] <- 366
-# weather_2020[366, 1] <- as.integer("2020")
-# 
-# tail(weather_2020)
-
 ```
 
 
@@ -165,60 +122,74 @@ nrow(fake_weather)
 ```
 
 
-# Creating the dry year as fake weather; Use 2010 as the wet year and create fake weather 
 
+# Creating the wet year as fake weather; Use 2015 as the wet year and create fake weather 
 
 ```{r}
+###---- choose the year of 2015's weather and replicate it for other years ----###
 
-###---- choose the year of 2019's weather and replicate it for other years ----###
-weather_2017 <- true_weather %>% 
-  filter(year == 2017)
+weather_2015 <- true_weather %>% 
+  filter(year == 2015)
 
-nrow(weather_2017) # 2012 is a leep year, has 366 days
 
-class(weather_2017)
+class(weather_2015)
 
-###---- generate the fake data for 2015-2020 ----###
-weather_2015 <- weather_2017
+
+str(weather_2015)
+
+
+###---- generate the fake data for 2014-2023 ----###
+
+weather_2014 <- weather_2015
+weather_2014$year <- as.integer(2014)
+
+weather_2015 <- weather_2015
 weather_2015$year <- as.integer(2015)
 
-weather_2016 <- weather_2017 %>% 
-  rbind(weather_2019[365,])
+weather_2016 <- weather_2015 %>% 
+  rbind(weather_2015[365,])
 
 weather_2016[366, 2] <- 366
 weather_2016$year <- as.integer(2016)
 
-tail(weather_2016)
-
-weather_2017 <- weather_2017
+weather_2017 <- weather_2015
 weather_2017$year <- as.integer(2017)
 
-weather_2018 <- weather_2017
+weather_2018 <- weather_2015
 weather_2018$year <- as.integer(2018)
 
-weather_2020 <- weather_2017 %>% 
-  rbind(weather_2019[365,])
+weather_2019 <- weather_2015
+weather_2019$year <- as.integer(2019)
+
+weather_2020 <- weather_2015 %>% 
+  rbind(weather_2015[365,])
 
 weather_2020[366, 2] <- 366
 weather_2020$year <- as.integer(2020)
 
-weather_2021 <- weather_2017
+weather_2021 <- weather_2015
 weather_2021$year <- as.integer(2021)
 
-weather_2022 <- weather_2017
+weather_2022 <- weather_2015
 weather_2022$year <- as.integer(2022)
 
-weather_2023 <- weather_2017
+weather_2023 <- weather_2015
 weather_2023$year <- as.integer(2023)
 
+weather_2024 <- weather_2015 %>% 
+  rbind(weather_2015[365,])
 
+weather_2024[366, 2] <- 366
+weather_2024$year <- as.integer(2024)
 
 ```
+
 
 ```{r}
 
 ## === bind all years' data together ==##
-fake_weather_dry <- weather_2015 %>% 
+fake_weather <- weather_2014 %>% 
+  rbind(weather_2015) %>% 
   rbind(weather_2016) %>% 
   rbind(weather_2017) %>% 
   rbind(weather_2018) %>% 
@@ -226,20 +197,191 @@ fake_weather_dry <- weather_2015 %>%
   rbind(weather_2020) %>% 
   rbind(weather_2021) %>% 
   rbind(weather_2022) %>% 
-  rbind(weather_2023)
+  rbind(weather_2023) %>% 
+  rbind(weather_2024)
 
-nrow(fake_weather_dry) # 365*9+2 = 3287
+nrow(fake_weather)
 
 
 ##====== write the weather into a met data file =====##
-write_apsim_met(fake_weather_dry, wrt.dir = write_dir, filename = "fake_weather_dry.met")
-
-read_apsim_met("fake_weather_dry.met", write_dir)
-
-
+write_apsim_met(fake_weather, wrt.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data", filename = "fake_weather_wet.met")
 
 ```
 
+
+
+
+
+# Creating the dry year as fake weather; Use 2021 as the dry year and create fake weather 
+
+```{r}
+###---- choose the year of 2015's weather and replicate it for other years ----###
+
+weather_2021 <- true_weather %>% 
+  filter(year == 2021)
+
+
+class(weather_2021)
+
+
+str(weather_2021)
+
+
+###---- generate the fake data for 2014-2023 ----###
+
+weather_2014 <- weather_2021
+weather_2014$year <- as.integer(2014)
+
+weather_2015 <- weather_2021
+weather_2015$year <- as.integer(2015)
+
+weather_2016 <- weather_2021 %>% 
+  rbind(weather_2021[365,])
+
+weather_2016[366, 2] <- 366
+weather_2016$year <- as.integer(2016)
+
+weather_2017 <- weather_2021
+weather_2017$year <- as.integer(2017)
+
+weather_2018 <- weather_2021
+weather_2018$year <- as.integer(2018)
+
+weather_2019 <- weather_2021
+weather_2019$year <- as.integer(2019)
+
+weather_2020 <- weather_2021 %>% 
+  rbind(weather_2021[365,])
+
+weather_2020[366, 2] <- 366
+weather_2020$year <- as.integer(2020)
+
+weather_2021 <- weather_2021
+weather_2021$year <- as.integer(2021)
+
+weather_2022 <- weather_2021
+weather_2022$year <- as.integer(2022)
+
+weather_2023 <- weather_2021
+weather_2023$year <- as.integer(2023)
+
+weather_2024 <- weather_2021 %>% 
+  rbind(weather_2021[365,])
+
+weather_2024[366, 2] <- 366
+weather_2024$year <- as.integer(2024)
+
+```
+
+
+```{r}
+
+## === bind all years' data together ==##
+fake_weather <- weather_2014 %>% 
+  rbind(weather_2015) %>% 
+  rbind(weather_2016) %>% 
+  rbind(weather_2017) %>% 
+  rbind(weather_2018) %>% 
+  rbind(weather_2019) %>% 
+  rbind(weather_2020) %>% 
+  rbind(weather_2021) %>% 
+  rbind(weather_2022) %>% 
+  rbind(weather_2023) %>% 
+  rbind(weather_2024)
+
+nrow(fake_weather)
+
+
+##====== write the weather into a met data file =====##
+write_apsim_met(fake_weather, wrt.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data", filename = "fake_weather_dry.met")
+
+```
+
+
+# Creating 30 years of fake weather data
+```{r}
+###---- choose the weather and replicate it for other years ----###
+
+for (i in c(1993, 1994, 1995, 1997, 1998, 1999, 2001, 2002, 2003, 2005, 2006, 2007, 2009, 2010, 2011, 2013, 2014, 2015, 2017, 2018, 2019, 2021)) {
+  
+  
+  weather_year_i <- true_weather %>% 
+  filter(year == i)
+
+
+  class(weather_year_i)
+
+  str(weather_year_i)
+
+
+###---- generate the fake data ----###
+
+
+weather_2014 <- weather_year_i
+weather_2014$year <- as.integer(2014)
+
+weather_2015 <- weather_year_i
+weather_2015$year <- as.integer(2015)
+
+weather_2016 <- weather_year_i %>% 
+  rbind(weather_year_i[365,])
+
+weather_2016[366, 2] <- 366
+weather_2016$year <- as.integer(2016)
+
+weather_2017 <- weather_year_i
+weather_2017$year <- as.integer(2017)
+
+weather_2018 <- weather_year_i
+weather_2018$year <- as.integer(2018)
+
+weather_2019 <- weather_year_i
+weather_2019$year <- as.integer(2019)
+
+weather_2020 <- weather_year_i %>% 
+  rbind(weather_year_i[365,])
+
+weather_2020[366, 2] <- 366
+weather_2020$year <- as.integer(2020)
+
+weather_2021 <- weather_year_i
+weather_2021$year <- as.integer(2021)
+
+weather_2022 <- weather_year_i
+weather_2022$year <- as.integer(2022)
+
+weather_2023 <- weather_year_i
+weather_2023$year <- as.integer(2023)
+
+weather_2024 <- weather_year_i %>% 
+  rbind(weather_year_i[365,])
+
+weather_2024[366, 2] <- 366
+weather_2024$year <- as.integer(2024)
+
+## === bind all years' data together ==##
+fake_weather <- weather_2014 %>% 
+  rbind(weather_2015) %>% 
+  rbind(weather_2016) %>% 
+  rbind(weather_2017) %>% 
+  rbind(weather_2018) %>% 
+  rbind(weather_2019) %>% 
+  rbind(weather_2020) %>% 
+  rbind(weather_2021) %>% 
+  rbind(weather_2022) %>% 
+  rbind(weather_2023) %>% 
+  rbind(weather_2024)
+
+nrow(fake_weather)
+
+##====== write the weather into a met data file =====##
+write_apsim_met(fake_weather, 
+                wrt.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data", 
+                filename = paste0("fake_weather_", as.character(i), ".met"))
+
+}
+
+```
 
 
 
