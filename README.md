@@ -1,1 +1,1 @@
-# OFPE_heterogeneity_residue_N
+# OFPE_heterogeneity_residual_N
