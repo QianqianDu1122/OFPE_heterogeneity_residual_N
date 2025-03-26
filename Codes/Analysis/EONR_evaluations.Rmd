@@ -554,6 +554,32 @@ cs_ofpe_estimate
 ```
 
 
+## No till ##
+
+```{r}
+###---- upload the simulation result ----###
+cc_consist_notill <- readRDS(here::here("Data", "Processed-Data", "cc_consistent_B105_no_till.rds"))
+
+###---- find the simulated true yield response curves ----###
+
+cc_consist_notill_yield <- cc_consist_notill %>% 
+  mutate(CropYield = CropYield*10*0.0159/0.85) %>% 
+  mutate(applied_N = applied_N*0.8921) %>% 
+  mutate(applied_N = round(applied_N, digits = 2)) %>% 
+  data.table() %>% 
+  .[year == 2023, .(yield_max = max(CropYield)), by = .(applied_N, plot_id)]
+
+
+ggplot(cc_consist_notill_yield)+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id))+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id))+
+  ggtitle("cc consistent trial design, normal weather, no tillage")
+
+
+
+```
+
+
 
 
 

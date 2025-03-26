@@ -52,27 +52,33 @@ ggplot(data = cc_consisten_b105)+
 # corn-corn ofpe setting
 ```{r}
 
-cc_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_ofpe_B105_1_50.rds"))
+annual_cc_ofpe_leaching <- data.frame()
 
-
-### Annual values ###
-annual_cc_ofpe_leaching <- cc_ofpe_b105 %>% 
+for (i in c("1", "2", "3", "4")) {
+  
+  cc_ofpe_b105 <- readRDS(here::here(paste0("Data/Processed-Data/Normal_till/cc_ofpe_B105_", i, ".rds")))
+  
+  ###--- Annual values ---###
+  annual_cc_ofpe_leaching_i <- cc_ofpe_b105 %>% 
   .[, .(annu_leach = max(AnnualNleaching)), .(year, plot_id)]
+
+  annual_cc_ofpe_leaching <- rbind(annual_cc_ofpe_leaching, annual_cc_ofpe_leaching_i)
+  
+}
 
 ggplot(data = annual_cc_ofpe_leaching)+
   geom_point(aes(x = year, y = annu_leach, color = plot_id))+
   geom_line(aes(x = year, y = annu_leach, color = plot_id))
 
 
-### Daily values ###
+###--- find the distribution of N leaching in different N application levels ---###
 
-ggplot(data = cc_ofpe_b105[year == 2023, ])+
-  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))
+annual_cc_ofpe_leaching$year <- as.character(annual_cc_ofpe_leaching$year)
 
+ggplot(data = annual_cc_ofpe_leaching[year != 2014, ])+
+  geom_boxplot(aes(x = year, y = annu_leach))+
+  ggtitle("cc 2019 ofpe")
 
-ggplot(data = cc_ofpe_b105)+
-  geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
-  facet_grid(.~ year)
 
 ```
 
@@ -122,8 +128,10 @@ ggplot(data = cs_consistent_b105)+
 # corn-soy ofpe setting
 ```{r}
 
-cs_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_ofpe_B105.rds"))
-
+cs_ofpe_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_ofpe_B105_1.rds")) %>% 
+  rbind(readRDS(here::here("Data", "Processed-Data", "corn_soy_ofpe_B105_2.rds"))) %>% 
+  rbind(readRDS(here::here("Data", "Processed-Data", "corn_soy_ofpe_B105_3.rds"))) %>% 
+  rbind(readRDS(here::here("Data", "Processed-Data", "corn_soy_ofpe_B105_4.rds")))
 
 ### Annual values ###
 annual_cs_ofpe_leaching <- cs_ofpe_b105 %>% 
@@ -132,6 +140,21 @@ annual_cs_ofpe_leaching <- cs_ofpe_b105 %>%
 ggplot(data = annual_cs_ofpe_leaching)+
   geom_point(aes(x = year, y = annu_leach, color = plot_id))+
   geom_line(aes(x = year, y = annu_leach, color = plot_id))
+
+
+
+###--- find the distribution of N leaching in different N application levels ---###
+
+annual_cs_ofpe_leaching$year <- as.character(annual_cs_ofpe_leaching$year)
+
+ggplot(data = annual_cs_ofpe_leaching[year != c(2014, 2015), ])+
+  geom_density(aes(annu_leach, fill = year, color = year), alpha = 0.1)
+
+
+ggplot(data = annual_cs_ofpe_leaching[year != c(2014, 2015), ])+
+  geom_histogram(aes(x = annu_leach))+
+  facet_grid(year ~. )
+
 
 
 ### Daily values ###
@@ -143,6 +166,34 @@ ggplot(data = cs_ofpe_b105[year == 2023, ])+
 ggplot(data = cs_ofpe_b105)+
   geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
   facet_grid(.~ year)
+
+
+annual_cs_ofpe_leaching <- data.frame()
+
+for (i in c("1", "2", "3", "4")) {
+  
+  
+  cs_ofpe_b105 <- readRDS(here::here(paste0("Data/Processed-Data/Normal_till/corn_soy_ofpe_B105_", i, ".rds")))
+  
+  ###--- Annual values ---###
+  annual_cs_ofpe_leaching_i <- cs_ofpe_b105 %>% 
+  .[, .(annu_leach = max(AnnualNleaching)), .(year, plot_id)]
+
+  annual_cs_ofpe_leaching <- rbind(annual_cs_ofpe_leaching, annual_cs_ofpe_leaching_i)
+  
+}
+
+
+###--- find the distribution of N leaching in different N application levels ---###
+
+annual_cs_ofpe_leaching$year <- as.character(annual_cs_ofpe_leaching$year)
+
+ggplot(data = annual_cs_ofpe_leaching[year != 2014, ])+
+  geom_boxplot(aes(x = year, y = annu_leach))+
+  ggtitle("cs 2019 ofpe")
+
+
+
 
 ```
 

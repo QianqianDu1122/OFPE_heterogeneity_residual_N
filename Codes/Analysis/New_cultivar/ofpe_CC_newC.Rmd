@@ -79,7 +79,7 @@ N_rates <- data.frame(
   )
 N_rates_by5 <- list(seq(0, 240, by = 5))
 
-number_plot <- 100
+number_plot <- 200
 
 set.seed(230829)
 ###--- trial design ---###
