@@ -45,7 +45,6 @@ opts_chunk$set(
 On-farm precision experiments (OFPE) have become valuable tools for determining nitrogen (N) rates that increase economic profits while potentially reduce environmental impacts. However, despite the insights gained from OFPE, no studies have examined the impact of applying variable N rates on soil residual N in fields where these experiments were conducted. We suspect that applying variable N rates may lead to differing levels of residual soil N, which could, in turn, influence the following year’s yield response to N and affect the optimal N rate for that site. This could potentially bias the yield response estimation when using OFPE data. This study uses the Agricultural Production Systems sIMulator (APSIM) to simulate the process of applying variable N on a hypothetical field with corn-corn and corn-soybean rotations, using a completely randomized trial design of N across years and a consistent trial design of N, respectively. Results show that soil N heterogeneity, caused by variable N application, is most pronounced in continuous corn rotations with a consistent trial design each year. In contrast, fields with corn-soybean rotations exhibit less soil N heterogeneity, likely because soybeans, as legumes, play a vital role in enriching and balancing soil nitrogen levels through biological nitrogen fixation when grown between two years of corn. The presence of soil N heterogeneity increases the variability in site-specific economically optimal N rate (EONR), thereby increasing the profit difference between site-specific and field-uniform EONR. Consequently, the EONR estimated from observed OFPE data may differ from the true field-uniform EONR. However, in the corn-soybean rotation system, we find no significant difference between the true uniform EONR and the OFPE-estimated EONR. 
 
 
-
 # Introduction
 
 As optimal input rates usually vary across and within fields, precision agriculture (PA) technology has been increasingly adopted by farmers [@mcfadden2023precision]. On-farm precision experimentation (OFPE), where researchers and farmers collaborate using PA tools to collect data, started in the late 1990s and has also been increasingly conducted to provide valuable information for field characteristics and profitability at specific fields [@cook1998precision; @bullock2002adding; @pringle2004field; @panten2010enhancing; @paccioretti2021statistical; @hegedus2023towards]. OFPE typically relies on variable rate applicators (VRA) to apply different input rates based on a field trial design, allowing for the estimation of the relationship between inputs and yield. The data and insights gained from OFPE have shown potential for identifying optimal input rates that enhance economic returns while potentially reducing environmental impacts [@bullock2019data]. However, despite these benefits, no studies have examined the impact of applying variable nitrogen rates on residual soil nitrogen in fields where these experiments were conducted.
@@ -133,7 +132,6 @@ Table 1 shows the true site-specific, true uniform, and estimated EONR for cc an
 As expected, the cc rotation with a consistent trial design exhibits the widest range of site-specific EONRs. In this scenario, some areas require as little as 44.6 lb/ac of N to reach the EONR due to the accumulation of inorganic N in the soil from years of consistently high N application. The difference between the true uniform EONR and the estimated EONR from observed OFPE data indicates that the field heterogeneity mentioned above can potentially introduce bias in EONR estimations. This bias can further result in significant profit differences when applying site-specific EONR, uniform EONR, or estimated EONR from OPFE data. In contrast, the cs rotation exhibits much lower field heterogeneity caused by variable N applications, leading to a closer alignment between the estimated EONR from observed OFPE data and the true uniform EONR derived from APSIM simulations. Furthermore, there is less difference between applying a uniform optimal EONR and a site-specific EONR in cs fields.
 
 
-
 ## N leaching
 
 Figure @ref(fig:cc-consis-leaching) shows the annual N leaching in a cc rotation field results from APSIM simulations. The results show that applying 250 kg/ha of N annually can result in approximately 50 kg/ha of N leaching. Meanwhile, continuously applying 300 kg/ha of N leads to about 87 kg/ha of N leaching, which is seven times higher than the leaching observed when N is applied at rates below 200 kg/ha per year. These findings indicate that consistently applying high N rates to the same location significantly increases N leaching, which may potentially reduce N use efficiency, degrade soil health, and contaminate water sources. 
@@ -145,7 +143,16 @@ Figure @ref(fig:cs-consis-leaching) shows the annual N leaching results from APS
 
 ## Different weather situations
 
+Weather plays a critical role in influencing the magnitude of field heterogeneity caused by variable N application, particularly through its effects on precipitation. In this study, historical weather data from 1993 to 2021 were used to examine how rainfall affects the accumulation and distribution of residual inorganic N in the soil, and in turn, alters crop yield responses (Figure @ref() and Figure @ref()). Figure @ref() illustrates the annual precipitation levels from 1993 to 2021. The results suggest that higher precipitation levels tend to reduce the spatial variability of residual N by promoting greater leaching and redistribution of nutrients throughout the soil profile. In contrast, during dry years, reduced rainfall limits N leaching, allowing more residual inorganic N to remain in the soil—particularly in areas that received higher N rates. This leads to greater accumulation of residual N and more pronounced differences in yield responses across the field, thereby increasing overall field heterogeneity.
+
+Similar precipitation effects were observed in fields under the corn–soybean (CS) rotation (Figure @ref()). In dry years, limited rainfall reduced the leaching of residual inorganic N, allowing for greater retention of nitrogen in the soil, particularly in areas that previously received higher N rates. This led to increased variation in yield responses across the field. Conversely, in wet years, higher precipitation facilitated more uniform leaching and redistribution of residual N, resulting in a more even nutrient profile and subsequently less variation in yield responses. These findings indicate that, even in a CS rotation where nitrogen is not applied during the soybean year, weather, especially rainfall, continues to play a key role in shaping the spatial patterns of residual N and yield variability.
+
+
 ## Without tillage situations
+
+Figure @ref() shows the yield responses with and without tillage under a corn–corn rotation and a consistent trial design for nitrogen (N) management. Based on the simulation results, the yield responses exhibit greater variation in the tilled field, suggesting that tillage increased the heterogeneity caused by variable N application. One possible explanation is that higher N application results in higher yields, which in turn produce more crop residue after harvest. Tillage plays an important role in mixing and incorporating residues into the soil. As a result, areas with greater residue may experience higher levels of organic matter and increased microbial activity following tillage, leading to greater heterogeneity across the field.
+
+However, no significant tillage effect was observed under the same simulation setup when a corn–soybean rotation was implemented (Figure @ref()). A possible explanation could be since soybeans do not require N fertilizer and generally produce lower biomass than corn, the amount of residue left after soybean harvest was considerably lower. Moreover, the year between corn crops allowed time for natural processes, particularly rainfall, to leach or redistribute much of the residual inorganic N left from the previous corn season. As a result, the level of residual N was already reduced and more evenly distributed across the field by the time corn was planted again. Consequently, the presence or absence of tillage did not significantly affect the spatial variability or heterogeneity of yield response in the CS rotation.
 
 
 # Discussion
@@ -158,30 +165,12 @@ Future research is needed to explore methods for determining EONR that incorpora
 Soil physical characteristics can significantly influence N dynamics and impact the outcomes observed in this study. For example, soil texture affects water retention, drainage, and N leaching rates, which in turn influence the accumulation of residual inorganic N and its availability for crops- sandy soils with high permeability may result greater N leaching, reducing the carryover of residual N and potentially increasing the EONR. Clay or silt loam have higher water-holding capacity, which can slow N leaching and lead to greater residual N accumulation over time.
 
 
-+ The degree of lagecy effects among cc tillage in two trial designs, cs tillage in two trial designs
-
-
-
-
-
-
-
-
-
-
-
-
 # Conclusion 
 
 
-+ True yield response functions under 4 scenarios
-In this study, we tested the hypothesis 
-  + This is more relavent to corn-corn rotation
-  + For corn-soy rotation, the field heterogenouity still exsits, but it is way smaller than corn-corn
-  + The degree/range of field heterogenouity caused by residual N varys by precipitation.
+This study evaluated how variable rate N applications may affect yield responses, EONR estimations, and N leaching across 24 scenarios defined by crop rotation, weather, trial design, and tillage. Results show that in continuous corn (CC) systems with consistent trial designs, repeated application of N in the same locations leads to significant residual N accumulation, increasing field heterogeneity and causing wide variation in yield response and site-specific EONRs. In contrast, corn–soybean (CS) rotations and randomized trial designs reduce this heterogeneity due to biological N fixation, lower residue, and natural leaching during the soybean year.
 
-+ optimal- under wet years vs dry years.
-
+Weather plays a critical role, with dry years amplifying variability in residual N and yield response, while wet years reduce it. Tillage further increases heterogeneity in CC systems by enhancing residue incorporation, but has minimal effect in CS systems. These findings suggest that using consistent trial designs over time, especially in CC fields, can introduce bias in EONR estimates and reduce nitrogen use efficiency. Future research should integrate residual N dynamics and weather variability into models to improve long-term nitrogen management.
 
 
 # References {-}
