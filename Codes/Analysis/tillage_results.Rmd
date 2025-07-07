@@ -1,0 +1,93 @@
+---
+title: "tillage vs. no_tillage results"
+author: "Qianqian Du"
+date: "2025-07-04"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+library(gam)
+library(here)
+```
+
+
+# CC rotation setting
+```{r}
+cc_till <- readRDS("/Users/qianqiandu/Desktop/cc_consistent_B105.rds") %>% 
+  mutate(till = "With Tillage")
+
+
+cc_notill <- readRDS("/Users/qianqiandu/Desktop/cc_consistent_B105_no_till.rds") %>% 
+  mutate(till = "Without Tillage")
+
+cc_data <- cc_till %>% 
+  rbind(cc_notill, fill = TRUE)
+
+
+cc_data <- cc_data %>% 
+  mutate(CropYield = CropYield*10*0.0159/0.85) %>% # change from g/m^2 to bu/ac
+  mutate(applied_N = applied_N*0.8921) %>% # change from kg/ha to lb/ac
+  data.table() %>% 
+  .[year == 2023, ] %>% 
+  .[, .(yield_max = max(CropYield)), by = .(applied_N, plot_id, till)] 
+
+
+ggplot(data = cc_data) +
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), size = 0.5) +
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), size = 0.5) +
+  scale_color_manual(
+    name = "N level",
+    values = c("red", "orange", "green", "blue", "cyan", "purple", "pink"),
+    labels = c("0", "50", "100", "150", "200", "250", "300")
+  ) +
+  ylab("Yield (bu/ac)") +
+  xlab("Applied N") +
+  theme_bw() +
+  theme(legend.position = "bottom") +   # <- move legend to bottom
+  facet_grid(. ~ till)
+
+
+```
+
+
+# CS rotation setting
+```{r}
+cs_till <- readRDS("/Users/qianqiandu/Desktop/corn_soy_consistent_B105.rds") %>% 
+  mutate(till = "With Tillage")
+
+
+cs_notill <- readRDS("/Users/qianqiandu/Desktop/consist_cs_no_till_2019.rds") %>% 
+  mutate(till = "Without Tillage")
+
+cs_data <- cs_till %>% 
+  rbind(cs_notill, fill = TRUE)
+
+
+cs_data <- cs_data %>% 
+  mutate(CropYieldMaize = CropYieldMaize*10*0.0159/0.85) %>% # change from g/m^2 to bu/ac
+  mutate(applied_N = applied_N*0.8921) %>% # change from kg/ha to lb/ac
+  data.table() %>% 
+  .[year == 2023, ] %>% 
+  .[, .(yield_max = max(CropYieldMaize)), by = .(applied_N, plot_id, till)] 
+
+
+ggplot(data = cs_data)+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), size = 0.5)+
+  scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("red", "orange", "green", "blue", "cyan", "purple", "pink"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )+
+  ylab("Yield (bu/ac)")+
+  xlab("Applied N")+
+  theme_bw()+
+  theme(legend.position = "bottom") +   # <- move legend to bottom
+  facet_grid(.~till)
+
+
+```
+

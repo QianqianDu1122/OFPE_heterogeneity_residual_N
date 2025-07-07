@@ -19,7 +19,7 @@ library(gam)
 ``` 
 
 ```{r}
-write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/"
+write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/weather_data"
 
 for (i in c(1993, 1994, 1995, 1997, 1998, 1999, 2001, 2002, 2003, 2005, 2006, 2007, 2009, 2010, 2011, 2013, 2014, 2015, 2017, 2018, 2019, 2021)) {
 
@@ -157,6 +157,92 @@ analysis_all_weather_fig <- ggplot(data = analysis_all_weather) +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 
 analysis_all_weather_fig
+
+```
+
+
+# Create weather figures 
+
+```{r}
+
+# 2019 as the normal weather
+
+fake_weather_2019 <- read_apsim_met("fake_weather_2019.met", src.dir = write_dir) %>% 
+  data.table() %>% 
+  .[, date := as.Date(day - 1, origin = paste0(year, "-01-01"))] %>% 
+  .[, `:=`(
+  year = year(date),
+  month = month(date))]
+
+# Calculate total monthly precipitation
+monthly_rain <- fake_weather_2019[, .(monthly_rain = sum(rain)), by = .(year, month)]
+
+# Create a proper date for plotting (set to 1st of each month)
+monthly_rain[, month_date := as.Date(paste(year, month, "01", sep = "-"))]
+
+
+fake_weather_2019_plot <- ggplot(monthly_rain, aes(x = month_date, y = monthly_rain)) +
+  geom_col(fill = "skyblue", width = 25) +
+  labs(
+    title = "Normal Monthly Precipitation from 2014 to 2023",
+    x = "Date",
+    y = "Total Monthly Rainfall (mm)"
+  ) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12)
+  )
+
+
+fake_weather_2019_plot
+
+```
+
+
+```{r}
+
+# 1993 as the wet weather
+
+fake_weather_1993 <- read_apsim_met("fake_weather_1993.met", src.dir = write_dir) %>% 
+  data.table() %>% 
+  .[, date := as.Date(day - 1, origin = paste0(year, "-01-01"))] %>% 
+  .[, `:=`(
+  year = year(date),
+  month = month(date))]
+
+# Calculate total monthly precipitation
+monthly_rain_1993 <- fake_weather_1993[, .(monthly_rain = sum(rain)), by = .(year, month)]
+
+# Create a proper date for plotting (set to 1st of each month)
+monthly_rain_1993[, month_date := as.Date(paste(year, month, "01", sep = "-"))]
+
+
+fake_weather_1993_plot <- ggplot(monthly_rain_1993, aes(x = month_date, y = monthly_rain)) +
+  geom_col(fill = "skyblue", width = 25) +
+  labs(
+    title = "Monthly Precipitation from 2014 to 2023",
+    x = "Date",
+    y = "Total Monthly Rainfall (mm)"
+  ) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12)
+  )
+
+
+fake_weather_1993_plot
 
 ```
 

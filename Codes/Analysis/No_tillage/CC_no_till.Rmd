@@ -6,7 +6,6 @@ output: html_document
 ---
 
 
-
 # uplode the packages
 ```{r, message=FALSE, warning=FALSE}
 
@@ -575,16 +574,34 @@ final_result <- rbind(final_result, simulation_data)
 final_result$applied_N %>% unique()
 final_result$plot_id %>% unique()
 
-saveRDS(final_result, file = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_consistent_B105_no_till.rds")
+# saveRDS(final_result, file = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_consistent_B105_no_till_1993.rds")
 
 
 see_result <- final_result %>% 
+  mutate(CropYield = CropYield*10*0.0159/0.85) %>% 
+  mutate(applied_N = applied_N*0.8921) %>% 
   filter(year == 2023) %>% 
   group_by(applied_N, plot_id) %>% 
   summarise(yield_max = max(CropYield))
 
-ggplot(see_result)+
-  geom_point(aes(x = applied_N, y = yield_max, color = plot_id))
+normal_year <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_consistent_B105_2011.rds") %>%
+  mutate(CropYield = CropYield*10*0.0159/0.85) %>%
+  mutate(applied_N = applied_N*0.8921) %>%
+  filter(year == 2023) %>%
+  group_by(applied_N, plot_id) %>%
+  summarise(yield_max = max(CropYield))
+
+
+
+ggplot(normal_year)+
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id), size = 0.5)+
+  geom_line(aes(x = applied_N, y = yield_max, color = plot_id), size = 0.5)+
+  ylim(40, 250)+
+    scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("red", "orange", "green", "blue", "cyan", "purple", "pink"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )
 
 
 
@@ -1108,7 +1125,7 @@ final_result <- rbind(final_result, simulation_data)
 final_result$applied_N %>% unique()
 final_result$plot_id %>% unique()
 
-saveRDS(final_result, file = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_ofpe_B105_notill.rds")
+saveRDS(final_result, file = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_ofpe_2019_notill.rds")
 
 
 see_result <- final_result %>% 

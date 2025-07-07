@@ -1,0 +1,27 @@
+---
+title: "soil_profile"
+author: "Qianqian Du"
+date: "2025-07-07"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+library(apsimx)
+library(here)
+```
+
+
+```{r}
+
+
+
+```
+
+
+
+
+
+  

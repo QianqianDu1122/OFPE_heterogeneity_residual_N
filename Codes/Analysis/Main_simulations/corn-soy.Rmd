@@ -23,9 +23,9 @@ library(lubridate)
 ```{r}
 
 ### ============ set path to the file ============ ###
-extd.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/New_cultivar"
+extd.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/Main_simulations"
 
-write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/New_cultivar"
+write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/Main_simulations"
 
 
 
@@ -57,7 +57,7 @@ inspect_apsimx("ofpe_newC_soy_corn-edited.apsimx", src.dir = extd.dir, node = "W
 
 # True yield response functions in each subplot 
 
-# Simulations
+## Simulations for randomized trial design
 ```{r}
 ###---- create the dataset to store the result ----###
 final_result <- data.frame()
@@ -94,7 +94,7 @@ N_rates_by5 <- list(seq(0, 240, by = 5))
 # each loop iteration is one plot, 200 plots, so j = 1:200
 
 # for (j in 1:length(applied_N_by_plots[[1]])) {
-for (j in 151:200) {  
+for (j in 51:100) {  
 
 new.date <- "2015-05-05"
 # new.action <- '[Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
@@ -353,21 +353,28 @@ final_result <- rbind(final_result, simulation_data)
 final_result$applied_N %>% unique()
 final_result$plot_id %>% unique()
 
-saveRDS(final_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_ofpe_B105_3.rds")
+saveRDS(final_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_ofpe_1993_2.rds")
 
 
 
 see_result <- final_result %>% 
+  mutate(CropYield = CropYieldMaize*10*0.0159/0.85) %>%
+  mutate(applied_N = applied_N*0.8921) %>%
   group_by(applied_N, plot_id) %>% 
-  summarise(yield_max = max(CropYieldMaize))
+  summarise(yield_max = max(CropYield)) 
 
-ggplot(see_result)+
-  geom_point(aes(x = applied_N, y = yield_max))
+class(see_result$yield_max)
+class(see_result$applied_N)
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = yield_max), data = see_result)+
+  geom_line(aes(x = applied_N, y = yield_max, group = plot_id), data = see_result)
 
 ```
 
 
-## Consistent trial design
+
+## Simulations for consistent trial design
 
 ```{r}
 
@@ -632,20 +639,27 @@ simulation_result <- rbind(simulation_result, simulation_data)
 
 }
 
-
 see_result <- simulation_result %>% 
-  filter(year == 2023) %>% 
-  group_by(applied_N, plot_id) %>% 
-  summarise(yield_max = max(CropYieldMaize))
+  mutate(CropYield = CropYieldMaize*10*0.0159/0.85) %>%
+  mutate(applied_N = applied_N*0.8921) %>%
+  filter(year == 2023) %>%
+  group_by(applied_N, plot_id) %>%
+  summarise(yield_max = max(CropYield))
+
 
 ggplot(see_result)+
-  geom_point(aes(x = applied_N, y = yield_max))
-
+  geom_point(aes(x = applied_N, y = yield_max, color = plot_id))+
+   # ylim(40, 250)+
+    scale_color_manual(
+    name = "N level",  # Change legend title
+    values = c("red", "orange", "green", "blue", "cyan", "purple", "pink"), # Adjust colors if needed
+    labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
+  )
 
 
 simulation_result$applied_N %>% unique()
 simulation_result$plot_id %>% unique()
-saveRDS(simulation_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_consistent_B105.rds")
+saveRDS(simulation_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_consistent_2019.rds")
 
 ```
 

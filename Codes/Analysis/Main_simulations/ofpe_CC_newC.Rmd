@@ -39,9 +39,9 @@ library(gam)
 ```{r}
 
 ### ============ set path to the file ============ ###
-extd.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/New_cultivar"
+extd.dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/Main_simulations"
 
-write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/New_cultivar"
+write_dir = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Codes/Analysis/Main_simulations"
 
 ###========== Check parameters of the file =========###
 inspect_apsimx("ofpe_CC_newC.apsimx", src.dir = extd.dir, node = "Clock")

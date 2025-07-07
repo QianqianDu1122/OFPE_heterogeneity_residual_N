@@ -8,7 +8,7 @@ output: html_document
 # corn-corn consistent setting
 ```{r}
 
-cc_consisten_b105 <- readRDS(here::here("Data", "Processed-Data", "cc_consistent_B105.rds"))
+cc_consisten_b105 <- readRDS("/Users/qianqiandu/Desktop/cc_consistent_B105.rds")
 
 
 ### Annual values ###
@@ -19,10 +19,14 @@ ggplot(data = annual_cc_coon_leaching)+
   geom_point(aes(x = year, y = annu_leach, color = plot_id))+
   geom_line(aes(x = year, y = annu_leach, color = plot_id))+
       scale_color_manual(
-    name = "N level",  # Change legend title
+    name = "Trial Design N Level",  # Change legend title
     values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
     labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
-  )
+  )+
+  xlab("Year")+
+  ylab("Annual Leaching")+
+  theme_bw()
+  
 
 
 ### Daily values ###
@@ -30,7 +34,7 @@ ggplot(data = annual_cc_coon_leaching)+
 ggplot(data = cc_consisten_b105[year == 2016, ])+
   geom_point(aes(x = Date, y = AnnualNleaching, color = plot_id))+
   scale_color_manual(
-    name = "N level",  # Change legend title
+    name = "trial design N level",  # Change legend title
     values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
     labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
   )
@@ -85,7 +89,7 @@ ggplot(data = annual_cc_ofpe_leaching[year != 2014, ])+
 # corn-soy consistent setting
 ```{r}
 
-cs_consistent_b105 <- readRDS(here::here("Data", "Processed-Data", "corn_soy_consistent_B105.rds"))
+cs_consistent_b105 <- readRDS("/Users/qianqiandu/Desktop/corn_soy_consistent_B105.rds")
 
 ### Annual values ###
 annual_cs_consis_leaching <- cs_consistent_b105 %>% 
@@ -95,10 +99,13 @@ ggplot(data = annual_cs_consis_leaching)+
   geom_point(aes(x = year, y = annu_leach, color = plot_id))+
   geom_line(aes(x = year, y = annu_leach, color = plot_id))+
       scale_color_manual(
-    name = "N level",  # Change legend title
+    name = "Trial Design N Level",  # Change legend title
     values = c("pink", "orange", "green", "blue", "cyan", "purple", "red"), # Adjust colors if needed
     labels = c("0", "50", "100", "150", "200", "250", "300")  # Change labels
-  )
+  )+
+  xlab("Year")+
+  ylab("Annual Leaching")+
+  theme_bw()
 
 
 ### Daily values ###
