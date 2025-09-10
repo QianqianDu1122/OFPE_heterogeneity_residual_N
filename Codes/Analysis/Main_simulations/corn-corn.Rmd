@@ -603,7 +603,7 @@ applied_N <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_hetero
 N_rates_by5 <- list(seq(0, 240, by = 5))
 
 
-for (j in 1:50) {
+for (j in 151:200) {
 
 N = as.character(N_rates[[1]][j])
 
@@ -1089,7 +1089,7 @@ final_result <- rbind(final_result, simulation_data)
 final_result$applied_N %>% unique()
 final_result$plot_id %>% unique()
 
-saveRDS(final_result, file = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_ofpe_2011.rds")
+saveRDS(final_result, file = "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_ofpe_B105_wet_4.rds")
 
 wet_result <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/cc_ofpe_B105_wet_1.rds")
 

@@ -94,7 +94,7 @@ N_rates_by5 <- list(seq(0, 240, by = 5))
 # each loop iteration is one plot, 200 plots, so j = 1:200
 
 # for (j in 1:length(applied_N_by_plots[[1]])) {
-for (j in 51:100) {  
+for (j in 151:200) {  
 
 new.date <- "2015-05-05"
 # new.action <- '[Fertiliser].Apply(Amount: 0, Type: Fertiliser.Types.UAN_N, Depth: 30)'
@@ -353,7 +353,7 @@ final_result <- rbind(final_result, simulation_data)
 final_result$applied_N %>% unique()
 final_result$plot_id %>% unique()
 
-saveRDS(final_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_ofpe_1993_2.rds")
+saveRDS(final_result, "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/corn_soy_ofpe_1993_4.rds")
 
 
 
