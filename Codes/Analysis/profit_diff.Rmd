@@ -1,0 +1,275 @@
+---
+title: "Profit Difference"
+author: "Qianqian Du"
+date: "2025-07-20"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+library(gam)
+library(here)
+```
+
+
+```{r}
+
+#--- set prices ---#
+corn_price <- 4 
+N_price <- 0.5
+
+
+# edit this to your folder once:
+dir <- "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/Normal_till"
+
+files <- sprintf("%s/corn_soy_ofpe_B105_%d.rds", dir, 1:4)
+
+process_one <- function(path) {
+  readRDS(path) %>%
+    mutate(
+      CropYield = CropYieldMaize * 10 * 0.0159 / 0.85,  # g/m^2 -> bu/ac
+      applied_N = applied_N * 0.8921               # kg/ha -> lb/ac
+    ) %>%
+    data.table() %>%
+    .[year == 2023] %>%
+    .[, .(yield_max = max(CropYield)), by = .(applied_N, plot_id)] %>%
+    .[, dataset := basename(path)]                 # optional: keep source file
+}
+
+# process sequentially (low memory) and combine
+res_list <- lapply(files, function(f) {
+  out <- process_one(f)
+  gc()  # help free memory between files
+  out
+})
+
+without_residual <- rbindlist(res_list, use.names = TRUE, fill = TRUE)
+
+##################-- this is only for consistent trials --#################
+without_residual <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/Normal_till/corn_soy_consistent_B105.rds") %>% 
+  mutate(
+      CropYield = CropYieldMaize * 10 * 0.0159 / 0.85,  # g/m^2 -> bu/ac
+      applied_N = applied_N * 0.8921               # kg/ha -> lb/ac
+    ) %>%
+    data.table() %>%
+    .[year == 2023] %>%
+    .[, .(yield_max = max(CropYield)), by = .(applied_N, plot_id)]
+#######################################################################
+
+#--- This is the yield response visualization based on applied N ---#
+ggplot(data = without_residual)+
+  geom_point(aes(x = applied_N, y = yield_max))
+
+
+#--- Find the true site-specific EONR ---#
+
+applied_site_EONR <- without_residual %>% 
+  rowwise() %>% 
+  data.table() %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  group_by(plot_id) %>%
+  filter(profit == max(profit))
+
+mean(applied_site_EONR$applied_N)
+mean(applied_site_EONR$profit)
+
+
+#--- Find the Uniform EONR ---#
+
+consist_uni <- without_residual %>% 
+  rowwise() %>% 
+  data.table() %>% 
+  .[, profit := yield_max*corn_price - applied_N*N_price] %>% 
+  #---- find each level of N can bring how much profit for the whole field ----#
+  .[, .(yield = mean(yield_max), profit = mean(profit)), by = applied_N] %>% 
+  #---- filter out the uniform N that brings the highest profit ----#
+  .[profit == max(profit), ] %>% 
+  .[, type := "uniform N rate"]
+
+consist_uni
+
+
+
+#--- Use GAM to estimate the yield response function ---#
+applied_gam <- gam(
+    yield_max
+  ~ s(applied_N),
+  data = without_residual
+)
+
+#--- Estimate the EONR based on the GAM ---#
+eval_data_applied <- data.frame(
+  applied_N = seq(
+    0, 250, by = 5
+  )
+) %>% 
+  data.table() %>% 
+  .[, y_hat := predict(applied_gam, newdata = ., se = TRUE)]
+
+
+applied_N_EONR <- eval_data_applied %>% 
+  .[, profit := y_hat*corn_price - applied_N*N_price] %>% 
+  filter(profit == max(profit)) %>% 
+  .[, type := "ofpe estimated EONR without N residual"]
+
+applied_N_EONR # The optimal applied EONR is 180 
+
+```
+
+
+```{r}
+dir <- "/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/Normal_till"
+
+files <- sprintf("%s/corn_soy_ofpe_B105_%d.rds", dir, 1:4)
+
+process_one <- function(path) {
+  readRDS(path) %>%
+    mutate(
+      CropYield = CropYieldMaize * 10 * 0.0159 / 0.85,  # g/m^2 -> bu/ac
+      applied_N = applied_N * 0.8921               # kg/ha -> lb/ac
+    ) %>%
+    data.table() %>%
+    .[year == 2023]
+}
+
+# process sequentially (low memory) and combine
+res_list <- lapply(files, function(f) {
+  out <- process_one(f)
+  gc()  # help free memory between files
+  out
+})
+
+
+simulated_raw_2023 <- rbindlist(res_list, use.names = TRUE, fill = TRUE) %>% 
+  filter(year == 2023)
+
+##################-- this is only for consistent trials --#################
+simulated_raw_2023 <- readRDS("/Users/qianqiandu/Library/CloudStorage/Box-Box/OFPE_heterogeneity_residue_N/Data/Processed-Data/Normal_till/corn_soy_consistent_B105.rds") %>% 
+  mutate(
+      CropYield = CropYieldMaize * 10 * 0.0159 / 0.85,  # g/m^2 -> bu/ac
+      applied_N = applied_N * 0.8921               # kg/ha -> lb/ac
+    ) %>%
+    data.table() %>%
+    .[year == 2023]
+#######################################################################
+
+  
+#--- calculate the N in the soil before planting ---#
+residual <- simulated_raw_2023 %>% 
+  filter(month == 4) %>% 
+  filter(day == 21) %>% 
+  mutate(residual = NO3+NH4)
+
+#--- combine the applied N and residual N together as total N ---#
+with_residual <- simulated_raw_2023 %>%
+  # mutate(CropYield = CropYield*10*0.0159/0.85) %>% # change from g/m^2 to bu/ac
+  # mutate(applied_N = applied_N*0.8921) %>% # change from kg/ha to lb/ac
+  data.table() %>% 
+  .[, .(yield_max = max(CropYield)), by = .(applied_N, plot_id)] %>% 
+  cbind(residual = residual$residual) %>% 
+  mutate(total_N = applied_N + residual)
+
+
+#--- This is the yield response visualization based on applied N and total N ---#
+ggplot(data = with_residual)+
+  geom_point(aes(x = applied_N, y = yield_max))+
+  geom_point(aes(x = total_N, y = yield_max), color = "red")+
+  geom_smooth(aes(x = total_N, y = yield_max), color = "purple")+
+  xlab("N rates")+
+  theme_bw()
+
+
+#--- Use GAM to estimate the yield response function ---#
+total_gam <- gam(
+    yield_max
+  ~ s(total_N),
+  data = with_residual
+)
+
+
+eval_data_total <- data.frame(
+  total_N = seq(
+    0, 300, by = 5
+  )
+) %>% 
+  data.table() %>% 
+  .[, y_hat := predict(total_gam, newdata = ., se = TRUE)]
+
+
+ggplot()+
+  geom_point(aes(x = applied_N, y = y_hat), data = eval_data_applied)+
+  geom_point(aes(x = total_N, y = y_hat), data = eval_data_total, color = "red")+
+  geom_smooth(aes(x = total_N, y = yield_max), color = "purple", data = with_residual)+
+  theme_bw()
+
+  
+
+total_N_EONR <- eval_data_total %>% 
+  .[, profit := y_hat*corn_price - total_N*N_price] %>% 
+  filter(profit == max(profit)) %>% 
+  .[, type := "ofpe estimated N rate with N total"] 
+
+
+profit_analysis <- with_residual %>% 
+  mutate(opt_N = total_N_EONR$total_N) %>% 
+  mutate(totalopt_minus_resi = opt_N-residual)
+
+
+#--- site-specific EONR with total N minus residual N ---#
+  
+total_site_EONR <- profit_analysis %>% 
+  rowwise() %>% 
+  data.table() %>% 
+  .[, profit := yield_max*corn_price - totalopt_minus_resi*N_price] %>% 
+  group_by(plot_id) %>%
+  filter(profit == max(profit)) %>% 
+  group_by(plot_id) %>% 
+  slice(1)
+
+mean(total_site_EONR$totalopt_minus_resi)
+mean(total_site_EONR$profit)
+
+
+#--- Find the Uniform EONR ---#
+
+consist_uni_residual <-
+  profit_analysis[
+    , .SD[which.max(yield_max)],            # keep the whole row with the max
+    by = .(totalopt_minus_resi, plot_id)
+  ] %>% 
+  .[ , profit := yield_max * corn_price - totalopt_minus_resi * N_price] %>% 
+  .[, .(yield = mean(yield_max), profit = mean(profit)), by = applied_N] %>% 
+  .[profit == max(profit)] %>% 
+  .[, type := "uniform N rate"]
+
+consist_uni_residual
+
+
+```
+
+
+# Try single yield response function
+
+```{r}
+single_01 <- with_residual %>% 
+  filter(plot_id == 1)
+
+ggplot(data = single_01)+
+  geom_point(aes(x = applied_N, y = yield_max))+
+  geom_point(aes(x = total_N, y = yield_max), color = "red")+
+  xlab("N rates")+
+  theme_bw()
+
+## The difference would just be the amount of NO3+NH4 in the spring for that site. The profit loss would just be the NO3+NH4 * price of N.??
+
+# In this case, there should no have any profit lose
+```
+
+
+
+
+
+
+
